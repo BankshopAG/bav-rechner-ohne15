@@ -1,0 +1,3105 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UK Vorteilsrechner</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --navy:#0F2544;--navy2:#1A3A6E;--navy3:#1E4080;
+  --or:#E8621A;--orl:#F2874A;--org:rgba(232,98,26,0.15);
+  --bg:#F4F6FA;--bg2:#EDF0F7;--white:#fff;
+  --tx:#0F2544;--txm:#3D5070;--txd:#4A5E78;
+  --bd:rgba(15,37,68,0.1);--bdg:rgba(232,98,26,0.3);
+  --green:#1A8C6A;--greenl:#E6F6F0;
+  --red:#C0392B;--redl:#FDECEA;
+  --r:16px;--rs:10px;--rxs:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy3) 100%);min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 2rem;position:relative;}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:var(--bg);clip-path:ellipse(55% 100% at 50% 100%);}
+.hbadge{display:inline-flex;align-items:center;background:rgba(232,98,26,0.2);border:1px solid rgba(232,98,26,0.4);border-radius:100px;padding:5px 14px;font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#F5A070;margin-bottom:1.75rem;}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.4rem,5.5vw,4.5rem);font-weight:700;color:#fff;line-height:1.05;letter-spacing:-.02em;max-width:760px;margin-bottom:1.25rem;}
+.hero h1 em{font-style:normal;color:var(--orl);}
+.hero p{font-size:.95rem;color:rgba(255,255,255,0.65);max-width:480px;margin-bottom:3rem;font-weight:300;line-height:1.7;}
+.hcta{display:inline-flex;align-items:center;gap:8px;background:var(--or);color:#fff;padding:13px 28px;border-radius:100px;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:all .2s;}
+.hcta:hover{background:var(--orl);transform:translateY(-2px);box-shadow:0 10px 24px rgba(232,98,26,0.35);}
+
+/* NAV */
+.snav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);padding:.5rem 1.5rem;display:flex;align-items:center;justify-content:center;gap:2px;flex-wrap:wrap;}
+.ni{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:100px;font-size:10px;font-weight:600;letter-spacing:.05em;color:var(--txm);text-decoration:none;transition:all .2s;white-space:nowrap;}
+.ni:hover{color:var(--tx);}
+.ni.act{background:var(--org);color:var(--or);}
+.nn{width:16px;height:16px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--txm);transition:all .2s;}
+.ni.act .nn{background:var(--or);color:#fff;}
+.nsep{width:10px;height:1px;background:var(--bd);flex-shrink:0;}
+
+/* LAYOUT */
+.sec{padding:5rem 2rem;max-width:960px;margin:0 auto;}
+.sdiv{height:1px;background:var(--bd);max-width:960px;margin:0 auto;}
+.ey{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--or);margin-bottom:.875rem;}
+.sec h2{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;letter-spacing:-.02em;color:var(--navy);line-height:1.1;margin-bottom:.625rem;}
+.slead{font-size:.9rem;color:var(--txm);max-width:520px;margin-bottom:2rem;font-weight:300;line-height:1.7;}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--bd);border-radius:var(--r);padding:1.5rem;}
+.card-sm{background:var(--white);border:1px solid var(--bd);border-radius:var(--rs);padding:1rem 1.125rem;}
+
+/* RANGE CONTROLS */
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;}
+.cc{background:var(--white);border:1px solid var(--bd);border-radius:var(--rs);padding:1rem 1.125rem;}
+.ct{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.cl{font-size:11px;color:var(--txm);font-weight:500;}
+.cv{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--or);}
+.cc-sub{font-size:10px;color:var(--txd);margin-top:4px;}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;border-radius:3px;outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--or);border:2px solid var(--white);box-shadow:0 1px 4px rgba(232,98,26,0.35);cursor:pointer;}
+
+/* METRICS */
+.mr{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem;}
+.mc{background:var(--white);border:1px solid var(--bd);border-radius:var(--rs);padding:1rem 1.125rem;}
+.mc.ft{background:linear-gradient(135deg,rgba(232,98,26,0.06),rgba(232,98,26,0.02));border-color:var(--bdg);}
+.mc.gn{background:var(--greenl);border-color:rgba(26,140,106,0.3);}
+.ml{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--txm);margin-bottom:3px;}
+.mv{font-family:'Syne',sans-serif;font-size:1.45rem;font-weight:700;color:var(--navy);line-height:1.1;}
+.mv.or{color:var(--or);}
+.mv.gn{color:var(--green);}
+.ms{font-size:10px;color:var(--txd);margin-top:2px;}
+
+/* BARS */
+.vc{background:var(--white);border:1px solid var(--bd);border-radius:var(--r);padding:1.5rem;margin-bottom:1.5rem;}
+.vt{font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--txm);margin-bottom:1.25rem;}
+.br2{margin-bottom:.875rem;}
+.bt2{display:flex;justify-content:space-between;margin-bottom:5px;}
+.bn{font-size:12px;color:var(--tx);font-weight:500;}
+.ba{font-size:12px;color:var(--tx);font-weight:500;}
+.btr{height:7px;background:var(--bg2);border-radius:100px;overflow:hidden;}
+.bf{height:100%;border-radius:100px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+
+/* INSIGHT */
+.ins{background:linear-gradient(135deg,rgba(232,98,26,0.06),rgba(232,98,26,0.02));border:1px solid var(--bdg);border-radius:var(--r);padding:1.5rem 1.75rem;margin-bottom:1.5rem;display:flex;gap:1rem;align-items:flex-start;}
+.ii{width:34px;height:34px;border-radius:50%;background:var(--org);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--or);flex-shrink:0;}
+.it{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:600;color:var(--navy);margin-bottom:3px;}
+.ix{font-size:.8rem;color:var(--txm);line-height:1.7;font-weight:300;}
+
+/* SPREAD */
+.spv{background:var(--white);border:1px solid var(--bd);border-radius:var(--r);padding:1.75rem;margin-bottom:1.5rem;}
+.spc{display:grid;grid-template-columns:1fr 40px 1fr;gap:1.5rem;align-items:start;}
+.spd{display:flex;align-items:center;justify-content:center;padding-top:2rem;color:var(--txd);font-size:1.2rem;}
+.spl{font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--txm);margin-bottom:.75rem;}
+.spb{font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;line-height:1;}
+.sps{font-size:11px;color:var(--txm);margin-top:4px;line-height:1.5;}
+.spg{margin-top:1.5rem;background:linear-gradient(135deg,rgba(26,140,106,0.08),rgba(26,140,106,0.02));border:1px solid rgba(26,140,106,0.3);border-radius:var(--rs);padding:1.125rem;text-align:center;}
+.spgl{font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:3px;}
+.spgv{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:700;color:var(--navy);}
+.spgs{font-size:10px;color:var(--txm);margin-top:2px;}
+
+
+/* CHART */
+.cc2{background:var(--white);border:1px solid var(--bd);border-radius:var(--r);padding:1.5rem;margin-bottom:1.5rem;}
+.ch{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;flex-wrap:wrap;gap:8px;}
+.ct2{font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--txm);}
+.leg{display:flex;gap:12px;flex-wrap:wrap;}
+.li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--txm);}
+.ld{width:7px;height:7px;border-radius:2px;flex-shrink:0;}
+
+/* MODE TOGGLE */
+.mode-toggle{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.mtab{padding:7px 16px;border-radius:100px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--bd);background:var(--white);color:var(--txm);font-family:'Inter',sans-serif;transition:all .2s;}
+.mtab.act{background:var(--org);border-color:var(--bdg);color:var(--or);}
+.mode-hint{font-size:10px;color:var(--txm);padding:4px 10px;background:var(--bg2);border-radius:100px;}
+.mode-hint.live{color:var(--green);background:var(--greenl);}
+
+/* EMP FORM */
+.emp-form{background:var(--white);border:1px solid var(--bd);border-radius:var(--r);padding:1.5rem;margin-bottom:1.25rem;}
+.ef-grid{display:grid;grid-template-columns:repeat(5,1fr) auto;gap:10px;align-items:end;margin-bottom:1rem;}
+.ef-grid2{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--bd);}
+.ef-field{display:flex;flex-direction:column;gap:4px;}
+.ef-field label{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--txm);}
+.ef-field input,.ef-field select{font-family:'Inter',sans-serif;font-size:12px;padding:8px 10px;background:var(--bg);border:1px solid var(--bd);border-radius:var(--rxs);color:var(--tx);outline:none;transition:border-color .2s;}
+.ef-field input:focus,.ef-field select:focus{border-color:var(--bdg);}
+.ef-field select option{background:#fff;}
+
+/* EMP LIST */
+.emp-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem;}
+.ecard{background:var(--white);border:1px solid var(--bd);border-radius:var(--rs);padding:1.125rem;position:relative;transition:border-color .2s;}
+.ecard:hover{border-color:var(--bdg);}
+.del{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:50%;background:var(--bg2);border:none;color:var(--txm);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;}
+.del:hover{background:var(--redl);color:var(--red);}
+.eav{width:36px;height:36px;border-radius:50%;background:var(--org);border:1px solid var(--bdg);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--or);margin-bottom:.75rem;}
+.en{font-size:12px;font-weight:500;color:var(--navy);margin-bottom:1px;}
+.er{font-size:10px;color:var(--txm);margin-bottom:.75rem;}
+.ew{display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;}
+.ek{color:var(--txm);}.ev{font-weight:500;color:var(--tx);}
+.erent{margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);}
+.erl{font-size:9px;color:var(--txm);margin-bottom:1px;}
+.erv{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700;color:var(--or);}
+
+/* CASHFLOW TABLE */
+.cf-scroll{overflow-x:auto;margin-bottom:1.5rem;}
+.cf-table{width:100%;border-collapse:collapse;font-size:11px;}
+.cf-table th{padding:7px 10px;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--txm);border-bottom:2px solid var(--bd);text-align:right;white-space:nowrap;background:var(--bg);}
+.cf-table th:first-child{text-align:left;}
+.cf-table td{padding:6px 10px;border-bottom:1px solid var(--bd);text-align:right;color:var(--tx);white-space:nowrap;}
+.cf-table td:first-child{text-align:left;font-weight:500;}
+.cf-table tr:hover td{background:var(--bg);}
+.cf-table .pos{color:var(--green);font-weight:500;}
+.cf-table .neg{color:var(--red);font-weight:500;}
+.cf-table .phase-header td{background:var(--navy);color:#fff;font-weight:600;font-size:10px;}
+
+/* WAYS TABLE */
+.ww{overflow-x:auto;margin-bottom:1.5rem;}
+.wt{width:100%;border-collapse:collapse;font-size:12px;}
+.wt th{padding:8px 12px;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--txm);border-bottom:1px solid var(--bd);text-align:left;background:var(--bg);}
+.wt td{padding:11px 12px;border-bottom:1px solid var(--bd);color:var(--tx);vertical-align:middle;}
+.wt tr.hl td{background:rgba(232,98,26,0.04);}
+.wt tr.hl td:first-child{border-left:3px solid var(--or);}
+.badge{display:inline-block;padding:2px 7px;border-radius:100px;font-size:9px;font-weight:600;}
+.bg2{background:var(--bg2);color:var(--txm);}
+.bo2{background:var(--org);color:var(--or);}
+.yes{color:var(--green);font-weight:500;}
+.no2{color:var(--red);font-weight:500;}
+.part{color:var(--or);font-weight:500;}
+
+/* SUMMARY */
+.sb{background:var(--navy);border-radius:var(--r);padding:2rem;margin-bottom:1.5rem;}
+.sum-title{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:700;color:#fff;margin-bottom:1.25rem;}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:1.25rem;}
+.si .sl{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:2px;}
+.si .sv{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;color:var(--orl);}
+.si .sd{font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px;}
+.stxt{font-size:.8rem;color:rgba(255,255,255,0.5);line-height:1.7;border-top:1px solid rgba(255,255,255,0.1);padding-top:1rem;}
+
+/* INTERNAL PANEL */
+.int-panel{background:var(--bg2);border:2px dashed var(--bd);border-radius:var(--r);margin-bottom:1.5rem;overflow:hidden;}
+.int-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;cursor:pointer;user-select:none;}
+.int-header-left{display:flex;align-items:center;gap:10px;}
+.int-lock{width:32px;height:32px;border-radius:50%;background:var(--navy2);display:flex;align-items:center;justify-content:center;font-size:14px;}
+.int-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--navy);}
+.int-sub{font-size:10px;color:var(--txm);}
+.int-badge{font-size:9px;font-weight:600;padding:3px 8px;border-radius:100px;background:var(--navy);color:#fff;letter-spacing:.08em;text-transform:uppercase;}
+.int-body{display:none;padding:1.5rem;border-top:1px solid var(--bd);background:var(--white);}
+.int-body.open{display:block;}
+.pw-gate{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;}
+.pw-gate input{font-family:'Inter',sans-serif;font-size:13px;padding:8px 12px;border:1px solid var(--bd);border-radius:var(--rs);outline:none;flex:1;max-width:240px;}
+.pw-gate input:focus{border-color:var(--bdg);}
+.pw-content{display:none;}
+.pw-content.unlocked{display:block;}
+
+/* CONTACT */
+.kc{background:var(--white);border:1px solid var(--bd);border-radius:var(--r);padding:2rem;margin-bottom:1.5rem;}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.ff{display:flex;flex-direction:column;gap:4px;}
+.ff label{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--txm);}
+.ff input,.ff textarea{font-family:'Inter',sans-serif;font-size:12px;padding:8px 12px;background:var(--bg);border:1px solid var(--bd);border-radius:var(--rxs);color:var(--tx);outline:none;transition:border-color .2s;}
+.ff input:focus,.ff textarea:focus{border-color:var(--bdg);}
+.ff textarea{resize:vertical;min-height:80px;}
+.cig{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1.25rem;}
+.cib{background:var(--bg);border-radius:var(--rxs);padding:.875rem;}
+.cil{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--or);margin-bottom:5px;}
+.cit{font-size:12px;color:var(--txm);line-height:1.7;}
+
+/* BUTTONS */
+.bp{display:inline-flex;align-items:center;gap:7px;background:var(--or);color:#fff;padding:11px 22px;border-radius:100px;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;border:none;cursor:pointer;text-decoration:none;transition:all .2s;}
+.bp:hover{background:var(--orl);transform:translateY(-1px);box-shadow:0 6px 18px rgba(232,98,26,0.3);}
+.bo3{display:inline-flex;align-items:center;gap:7px;background:transparent;color:var(--txm);padding:10px 22px;border-radius:100px;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;border:1px solid var(--bd);cursor:pointer;text-decoration:none;transition:all .2s;}
+.bo3:hover{border-color:var(--navy2);color:var(--navy);}
+.brow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:1.25rem;}
+
+/* FADE */
+.fu{opacity:1;transform:none;transition:opacity .5s ease,transform .5s ease;}
+.fu.vis{opacity:1;transform:none;}
+.fu.d1{transition-delay:.1s;}.fu.d2{transition-delay:.2s;}.fu.d3{transition-delay:.3s;}
+
+footer{text-align:center;padding:1.5rem;font-size:10px;color:var(--txm);border-top:1px solid var(--bd);}
+
+
+@media(max-width:680px){
+  .cg,.mr,.emp-list,.sg,.fg,.cig,.ef-grid,.ef-grid2,.spc{grid-template-columns:1fr;}
+  .mr{grid-template-columns:1fr 1fr;}
+  .ef-grid{grid-template-columns:1fr 1fr;}
+  .snav{overflow-x:auto;justify-content:flex-start;padding:.5rem 1rem;}
+  .sec{padding:3.5rem 1.25rem;}
+}
+
+@media print{
+  @page{margin:1.5cm 1.6cm;size:A4 portrait;}
+  /* Alles ausblenden außer Angebot */
+  #top,#snav,#s1,#s2,#s3,#s4,#s6,#s7,#s8,
+  #uk-modul,#intern-modal,#intern-fab,#dlg-berater,
+  #steuer-tab-wrap,#btn-steuer-tab,#dotierung-hinweis,
+  #login-screen,#admin-panel,#admin-bar,
+  .edot,.sdiv,footer,nav{display:none!important;}
+  #print-section{
+    display:block!important;
+    position:static!important;
+    visibility:visible!important;
+    opacity:1!important;
+    width:100%!important;
+    margin:0!important;padding:0!important;
+  }
+  #print-section *{visibility:visible!important;opacity:1!important;}
+  /* Dotierung NIE drucken */
+  #steuer-tab-wrap,#steuer-tab-wrap *,#dotierung-hinweis,
+  #btn-steuer-tab,#uk-modul,#uk-modul *,
+  .edot,.edot *{display:none!important;visibility:hidden!important;}
+  /* Seitenumbruch NUR nach ps-page, nie mittendrin */
+  .ps-page{page-break-after:always;break-after:page;page-break-inside:avoid;}
+  .ps-page-auto{page-break-after:auto;break-after:auto;}
+  /* Tabellen sauber umbrechen */
+  .ps-table{page-break-inside:auto;width:100%;}
+  .ps-table thead{display:table-header-group;}
+  .ps-table tr{page-break-inside:avoid;break-inside:avoid;}
+  /* Keine Schatten, keine box-shadow */
+  *{box-shadow:none!important;text-shadow:none!important;}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<div class="hero" id="top">
+  <div class="hbadge">Pauschal besteuerte Unterstützungskasse</div>
+  <h1>Mehr Kapital.<br><em>Weniger Steuern.</em><br>Für Ihr Unternehmen.</h1>
+  <p>Berechnen Sie Schritt für Schritt Ihren steuerlichen Vorteil, den Kapitalüberschuss und den Kapitalfluss Ihrer Belegschaft.</p>
+  <a href="#s1" class="hcta">Jetzt berechnen →</a>
+</div>
+
+<nav class="snav" id="snav">
+  <a href="#s1" class="ni act" data-s="s1"><span class="nn">1</span>Parameter</a><div class="nsep"></div>
+  <a href="#s2" class="ni" data-s="s2"><span class="nn">2</span>Steuervorteil</a><div class="nsep"></div>
+  <a href="#s3" class="ni" data-s="s3"><span class="nn">3</span>Kapitalüberschuss</a><div class="nsep"></div>
+  <a href="#s4" class="ni" data-s="s4"><span class="nn">4</span>Kapital</a><div class="nsep"></div>
+  <a href="#s6" class="ni" data-s="s6"><span class="nn">5</span>Kapitalfluss</a><div class="nsep"></div>
+  <a href="#s7" class="ni" data-s="s7"><span class="nn">6</span>Vergleich</a><div class="nsep"></div>
+  <a href="#s8" class="ni" data-s="s8"><span class="nn">7</span>Ergebnis</a><div class="nsep"></div>
+  <a href="#uk-modul" class="ni" data-s="uk-modul"><span class="nn">§</span>§4d UK</a>
+</nav>
+</div>
+
+<!-- S1 PARAMETER -->
+<section class="sec" id="s1">
+  <div class="fu"><p class="ey">Schritt 1 — Parameter</p><h2>Unternehmensparameter</h2>
+  <p class="slead">Schieberegler für schnelle Übersicht — oder individuelle Mitarbeiter in Schritt 5 eintragen.</p></div>
+
+  <!-- FINANZIERUNGSMODELL (nur Individual) -->
+  <div id="fm-block" class="fu d1" style="margin-bottom:1.25rem;display:none">
+    <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--txm);margin-bottom:.625rem">Finanzierungsmodell</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="mtab act" id="fm-ag" onclick="setFM('ag')">Arbeitgeberfinanziert</button>
+      <button class="mtab" id="fm-an" onclick="setFM('an')">Entgeltumwandlung (AN)</button>
+      <button class="mtab" id="fm-ko" onclick="setFM('ko')">Kombi-Modell (AG + AN)</button>
+    </div>
+    <div id="fm-hint" style="font-size:11px;color:var(--txm);margin-top:.625rem;padding:.5rem .875rem;background:var(--bg2);border-radius:var(--rs)">AG zahlt den vollständigen Beitrag — steuerlich als Betriebsausgabe abzugsfähig.</div>
+  </div>
+
+  <div class="mode-toggle fu d1">
+    <button class="mtab act" id="mt-p" onclick="setMode('p')">Pauschal</button>
+    <button class="mtab" id="mt-d" onclick="setMode('d')">Individuell</button>
+    <span class="mode-hint" id="mode-hint">Schieberegler aktiv</span>
+  </div>
+  <div id="pauschal-block" class="fu d2">
+    <div class="cg">
+      <div class="cc"><div class="ct"><span class="cl">Anzahl Mitarbeiter</span><span class="cv" id="l-ma">5</span></div><input type="range" min="1" max="100" step="1" value="5" id="r-ma"></div>
+      <div class="cc"><div class="ct"><span class="cl">Monatsbeitrag pro MA</span><span class="cv" id="l-bt">250 €</span></div><input type="range" min="0" max="2000" step="50" value="250" id="r-bt"></div>
+      <div class="cc"><div class="ct"><span class="cl">Laufzeit (Jahre)</span><span class="cv" id="l-jr">15 J.</span></div><input type="range" min="5" max="35" step="1" value="15" id="r-jr"></div>
+      <div class="cc"><div class="ct"><span class="cl">Grenzsteuersatz</span><span class="cv" id="l-st">30 %</span></div><input type="range" min="15" max="45" step="1" value="30" id="r-st"></div>
+      <div class="cc"><div class="ct"><span class="cl">Renditezusage MA (p.a.)</span><span class="cv" id="l-rz">2,0 %</span></div><input type="range" min="5" max="50" step="5" value="20" id="r-rz"></div>
+      <div class="cc"><div class="ct"><span class="cl">Depotrendite AG (p.a.)</span><span class="cv" id="l-rk">5,0 %</span></div><input type="range" min="25" max="80" step="5" value="50" id="r-rk"></div>
+    </div>
+    <!-- AN-Zeile: nur sichtbar bei AN/Kombi -->
+    <div id="an-sliders" style="display:none" class="cg" style="margin-top:.75rem">
+      <div class="cc" style="border-color:rgba(26,140,106,0.3);background:rgba(26,140,106,0.03)">
+        <div class="ct"><span class="cl">AN-Eigenanteil (Entgeltumwandlung)</span><span class="cv" style="color:var(--green)" id="l-an">150 €</span></div>
+        <input type="range" min="50" max="1000" step="50" value="150" id="r-an">
+        <div class="cc-sub">Monatlicher Bruttogehaltsverzicht pro MA</div>
+      </div>
+      <div class="cc" style="border-color:rgba(26,140,106,0.3);background:rgba(26,140,106,0.03)">
+        <div class="ct"><span class="cl">AG-Zuschuss auf AN-Betrag</span><span class="cv" style="color:var(--green)" id="l-agz">0 €</span></div>
+        <input type="range" min="0" max="100" step="1" value="0" id="r-agz-pct">
+        <div class="cc-sub">% des AN-Betrags (freiwillig — bei pauschal dotierter UK keine gesetzliche Pflicht)</div>
+      </div>
+    </div>
+    <!-- AN-Info-Box -->
+    <div id="an-infobox" style="display:none;margin-top:.75rem;background:var(--greenl);border:1px solid rgba(26,140,106,0.25);border-radius:var(--rs);padding:.875rem 1.125rem">
+      <div style="font-size:11px;font-weight:600;color:var(--green);margin-bottom:.5rem">Liquiditätseffekt Entgeltumwandlung</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+        <div><div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--txm);margin-bottom:2px">AN netto zahlt</div><div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy)" id="an-netto-kosten">—</div><div style="font-size:9px;color:var(--txm)">nach Steuer+SV-Ersparnis</div></div>
+        <div><div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--txm);margin-bottom:2px">AG SV-Ersparnis</div><div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--green)" id="ag-sv-ersparnis">—</div><div style="font-size:9px;color:var(--txm)">~25 % auf AN-Betrag</div></div>
+        <div><div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--txm);margin-bottom:2px">Gesamtbeitrag UK</div><div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--or)" id="uk-gesamtbeitrag">—</div><div style="font-size:9px;color:var(--txm)">AG + AN + Zuschuss</div></div>
+      </div>
+    </div>
+  </div>
+  <div id="detail-block" style="display:none" class="fu d2">
+    <div style="background:var(--greenl);border:1px solid rgba(26,140,106,0.25);border-radius:var(--rs);padding:.875rem 1.125rem;margin-bottom:1rem;display:flex;gap:.75rem;align-items:center;">
+      <div style="font-size:18px;">✓</div>
+      <div><div style="font-size:12px;font-weight:600;color:var(--green)">Individuelle Mitarbeiterdaten aktiv</div><div style="font-size:11px;color:var(--txm)">Werte werden aus eingetragenen Mitarbeitern berechnet.</div></div>
+    </div>
+    <div class="cg" style="grid-template-columns:repeat(3,1fr)">
+      <div class="cc"><div class="ct"><span class="cl">Anz. MA</span><span class="cv" id="d-ma">—</span></div><div class="cc-sub">eingetragen</div></div>
+      <div class="cc"><div class="ct"><span class="cl">Ø Beitrag</span><span class="cv" id="d-abt">—</span></div><div class="cc-sub">pro Mitarbeiter</div></div>
+      <div class="cc"><div class="ct"><span class="cl">Ø Laufzeit</span><span class="cv" id="d-lz">—</span></div><div class="cc-sub">bis Rentenbeginn</div></div>
+    </div>
+    <div class="cg" style="grid-template-columns:1fr 1fr;margin-top:.75rem">
+      <div class="cc"><div class="ct"><span class="cl">Grenzsteuersatz</span><span class="cv" id="l-st2">30 %</span></div><input type="range" min="15" max="45" step="1" value="30" id="r-st2" oninput="syncSt(this)"></div>
+      <div class="cc"><div class="ct"><span class="cl">Depotrendite AG</span><span class="cv" id="l-rk2">5,0 %</span></div><input type="range" min="25" max="80" step="5" value="50" id="r-rk2" oninput="syncRk(this)"></div>
+    </div>
+  </div>
+  <!-- INDIVIDUAL BLOCK (nur bei Individuell sichtbar) -->
+  <div id="indiv-block" style="display:none">
+    <div class="fu d1" style="margin-bottom:.75rem">
+      <div style="font-size:10px;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Individuelle Mitarbeiter</div>
+    </div>
+<div class="emp-form fu d1">
+    <div class="ef-grid">
+      <div class="ef-field"><label>Name</label><input type="text" id="ef-name" placeholder="Max Mustermann"></div>
+      <div class="ef-field"><label>Aktuelles Alter</label><input type="number" id="ef-age" min="18" max="65" value="35"></div>
+      <div class="ef-field"><label>AG-Monatsbeitrag (€)</label><input type="number" id="ef-bt" min="50" max="10000" value="250"></div>
+      <div class="ef-field"><label>Rentenbeginn-Alter</label><input type="number" id="ef-rba" min="55" max="75" value="67"></div>
+      <div class="ef-field"><label>Renditezusage (%)</label><input type="number" id="ef-rz" min="0.5" max="10" step="0.5" value="2"></div>
+      <div class="ef-field"><label>&nbsp;</label></div>
+    </div>
+    <div class="ef-grid2">
+      <div class="ef-field"><label>Auszahlungsart</label>
+        <select id="ef-pay"><option value="rente">Monatliche Rente</option><option value="kapital">Einmalkapital</option></select>
+      </div>
+      <div class="ef-field"><label>Rentenfaktor (wenn Rente)</label><input type="number" id="ef-rf" min="10" max="30" value="16"></div>
+      <div class="ef-field"><label>Rentenphase (Jahre)</label><input type="number" id="ef-rd" min="10" max="30" value="20"></div>
+      <div class="ef-field"><label>&nbsp;</label></div>
+    </div>
+    <!-- AN-Felder (nur bei AN/Kombi sichtbar) -->
+    <div id="ef-an-block" style="display:none;margin-top:.875rem;padding-top:.875rem;border-top:1px solid var(--bd)">
+      <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:.625rem">Entgeltumwandlung (Arbeitnehmer)</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr) auto;gap:10px;align-items:end">
+        <div class="ef-field"><label>AN-Eigenanteil (€/Monat)</label><input type="number" id="ef-an" min="0" max="2000" value="0" placeholder="0 = kein AN-Anteil"></div>
+        <div class="ef-field"><label>AG-Zuschuss (%)</label><input type="number" id="ef-agzp" min="0" max="100" value="0" placeholder="0 %"></div>
+        <div class="ef-field">
+          <label>Lohnsteuerklasse AN</label>
+          <select id="ef-stk">
+            <option value="0.30">Kl. I/IV (ca. 30 %)</option>
+            <option value="0.35">Kl. III (ca. 35 %)</option>
+            <option value="0.25">Kl. II (ca. 25 %)</option>
+            <option value="0.42">Kl. V/VI (ca. 42 %)</option>
+          </select>
+        </div>
+        <div class="ef-field"><label>&nbsp;</label><button class="bp" onclick="addEmployee()" style="width:100%;justify-content:center">+ Hinzufügen</button></div>
+      </div>
+    </div>
+    <!-- Hinzufügen-Button für AG-only Modus -->
+    <div id="ef-ag-btn" style="margin-top:.875rem;padding-top:.875rem;border-top:1px solid var(--bd)">
+      <button class="bp" onclick="addEmployee()" style="justify-content:center">+ Mitarbeiter hinzufügen</button>
+    </div>
+  </div>
+    <div class="emp-list fu d3" id="emp-list">
+      <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--txm);font-size:13px;border:1px dashed var(--bd);border-radius:var(--rs)">Noch keine Mitarbeiter eingetragen.</div>
+    </div>
+  </div>
+
+  <div class="mr fu d3">
+    <div class="mc"><div class="ml">Anzahl MA</div><div class="mv" id="m-ma">—</div><div class="ms" id="m-ma-s">—</div></div>
+    <div class="mc"><div class="ml">Ø Monatsbeitrag</div><div class="mv or" id="m-abt">—</div></div>
+    <div class="mc"><div class="ml">Ø Laufzeit</div><div class="mv" id="m-alz">—</div></div>
+    <div class="mc ft"><div class="ml">AG-Kapital bei Vertragsende</div><div class="mv or" id="m-gk">—</div></div>
+  </div>
+  <div class="ins fu" id="ins-s5"><div class="ii">♦</div><div><div class="it" id="i5t">—</div><div class="ix" id="i5x">—</div></div></div>
+  <div class="brow fu"><a href="#s2" class="bp">Steuervorteil →</a></div>
+</section>
+<div class="sdiv"></div>
+
+<!-- S2 STEUERVORTEIL -->
+<section class="sec" id="s2">
+  <div class="fu"><p class="ey">Schritt 2 — Steuerersparnis</p><h2>So viel Steuern sparen Sie</h2>
+  <p class="slead">Alle Zuwendungen sind als Betriebsausgabe voll abzugsfähig — ohne Beitragsdeckel.</p></div>
+  <div class="vc fu d1">
+    <div class="vt">Gesamtvergleich über alle MA und Laufzeiten</div>
+    <div class="br2"><div class="bt2"><span class="bn">Gesamtbeiträge UK</span><span class="ba" id="b-ges">—</span></div><div class="btr"><div class="bf" id="bf-ges" style="background:var(--navy2);width:0%"></div></div></div>
+    <div class="br2"><div class="bt2"><span class="bn"><span style="color:#0F2544;font-weight:700">§ 4d Dotierung</span> + <span style="color:#8BAEC8;font-weight:700">Zinsen</span></span><span class="ba" id="b-ges4d">—</span></div><div class="btr" style="display:flex;overflow:hidden"><div class="bf" id="bf-dot4d" style="background:#0F2544;width:0%;flex-shrink:0"></div><div class="bf" id="bf-zins4d" style="background:#8BAEC8;width:0%;flex-shrink:0"></div></div></div>
+    <div class="br2"><div class="bt2"><span class="bn">Steuerersparnis Firma</span><span class="ba" id="b-st">—</span></div><div class="btr"><div class="bf" id="bf-st" style="background:var(--or);width:0%"></div></div></div>
+    <div class="br2"><div class="bt2"><span class="bn">Netto-Aufwand Firma</span><span class="ba" id="b-net">—</span></div><div class="btr"><div class="bf" id="bf-net" style="background:rgba(232,98,26,0.3);width:0%"></div></div></div>
+    <div class="br2"><div class="bt2"><span class="bn" style="color:var(--txm)">Äquiv. Gehaltserhöhung (inkl. SV)</span><span class="ba" id="b-geh" style="color:var(--txm)">—</span></div><div class="btr"><div class="bf" id="bf-geh" style="background:var(--bg2);width:0%"></div></div></div>
+  </div>
+  <div class="ins fu d2"><div class="ii">↓</div><div><div class="it" id="i2t">—</div><div class="ix" id="i2x">—</div></div></div>
+  <!-- § 4d Steuer-Tabelle ausklappbar -->
+  <div class="fu d2" style="margin-bottom:1rem">
+    <button onclick="toggleSteuerTabelle()" id="btn-steuer-tab"
+      style="width:100%;padding:.75rem 1rem;background:var(--white);border:1.5px solid var(--bd);border-radius:var(--r);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--tx)">
+      <span>📊 Steuerliche Entwicklung — § 4d EStG (Jahresübersicht)</span>
+      <span id="steuer-tab-arrow" style="font-size:16px;transition:transform .3s">▼</span>
+    </button>
+    <div id="steuer-tab-wrap" style="display:none;overflow-x:auto;border:1px solid var(--bd);border-top:none;border-radius:0 0 var(--r) var(--r)">
+      <table class="cf-table" id="steuer-tab-main" style="min-width:800px"></table>
+      <div style="padding:.5rem 1rem;font-size:9px;color:var(--txm)">* § 4d EStG: Dotierung max. 25% Jahresrente (Rente) bzw. 2,5% Kapitalzusage/Jahr · Max. Reserve 200% Jahresrente bzw. 20% Kapital · Zinsen 6% auf Kassenbestand buchhalterisch absetzbar</div>
+    </div>
+  </div>
+
+  <div class="brow fu d3"><a href="#s3" class="bp">Kapitalüberschuss →</a></div>
+</section>
+<div class="sdiv"></div>
+
+<!-- S3 SPREAD -->
+<section class="sec" id="s3">
+  <div class="fu"><p class="ey">Schritt 3 — Kapitalüberschuss</p><h2>Ihr stiller Vermögensaufbau</h2>
+  <p class="slead">Sie sagen dem Mitarbeiter eine Rendite zu — das Kapital erwirtschaftet mehr. Die Differenz bleibt im Unternehmen.</p></div>
+  <div class="spv fu d1">
+    <div class="spc">
+      <div>
+        <div class="spl">Alle MA erhalten (zugesagt, gesamt)</div>
+        <div class="spb" id="sp-ma" style="color:var(--txm)">—</div>
+        <div class="sps">Garantierte Ablaufleistung<br>bei Ø <span id="sp-rzl">2,0 %</span> zugesagt</div>
+        <div style="margin-top:1rem;font-size:11px;color:var(--txm);line-height:1.6">Versorgungspflicht vollständig gedeckt.</div>
+      </div>
+      <div class="spd">→</div>
+      <div>
+        <div class="spl">Kapital erwirtschaftet (real, gesamt)</div>
+        <div class="spb" id="sp-uk" style="color:var(--or)">—</div>
+        <div class="sps">Tatsächlicher Kapitalwert<br>bei <span id="sp-rkl">5,0 %</span> AG-Rendite</div>
+        <div style="margin-top:1rem;font-size:11px;color:var(--txm);line-height:1.6">Mehrertrag verbleibt im Unternehmen.</div>
+      </div>
+    </div>
+    <div class="spg">
+      <div class="spgl" id="sp-gain-label">Kapitalüberschuss (Rendite-Spread)</div>
+      <div class="spgv" id="sp-gain">—</div>
+      <div class="spgs" id="sp-gains">—</div>
+    </div>
+  </div>
+
+  <!-- Individuelle MA-Leistungen ausklappbar -->
+  <div class="fu d2" id="ma-leist-block" style="margin-bottom:1rem;display:none">
+    <button onclick="toggleMaLeistung()" id="btn-ma-leist"
+      style="width:100%;padding:.75rem 1rem;background:var(--white);border:1.5px solid var(--bd);border-radius:var(--r);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--tx)">
+      <span>👥 Individuelle Leistungen je Mitarbeiter</span>
+      <span id="ma-leist-arrow" style="font-size:16px;transition:transform .3s">▼</span>
+    </button>
+    <div id="ma-leist-wrap" style="display:none;border:1px solid var(--bd);border-top:none;border-radius:0 0 var(--r) var(--r);overflow-x:auto">
+      <table id="ma-leist-table" style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px"></table>
+    </div>
+  </div>
+
+  <div class="ins fu d2"><div class="ii">★</div><div><div class="it" id="i3t">—</div><div class="ix" id="i3x">—</div></div></div>
+  <div class="brow fu d3"><a href="#s4" class="bp">Kapitalentwicklung →</a></div>
+</section>
+<div class="sdiv"></div>
+
+<!-- S4 KAPITAL -->
+<section class="sec" id="s4">
+  <div class="fu"><p class="ey">Schritt 4 — Kapitalentwicklung</p><h2>MA-Rendite vs. AG-Kapital</h2>
+  <p class="slead">Zwei Linien: Was dem Mitarbeiter zugesagt wird — und was das Kapital tatsächlich erwirtschaftet.</p></div>
+  <div class="mr fu d1" style="grid-template-columns:repeat(3,1fr)">
+    <div class="mc"><div class="ml">Kapital (MA-Rendite zugesagt)</div><div class="mv" id="rk-m1">—</div><div class="ms" id="rk-m1-sub">Versorgungspflicht</div></div>
+    <div class="mc ft"><div class="ml">Kapital (AG-Rendite real)</div><div class="mv or" id="rk-m2">—</div><div class="ms">tatsächlicher Wert</div></div>
+    <div class="mc gn"><div class="ml">Kapitalüberschuss</div><div class="mv gn" id="rk-m3">—</div><div class="ms" id="rk-m3-sub">Unternehmensgewinn</div></div>
+  </div>
+  <div class="cc2 fu d2">
+    <div class="ch">
+      <div class="ct2">Kapitalentwicklung Gesamtportfolio</div>
+      <div class="leg">
+        <div class="li"><div class="ld" style="background:var(--txd)"></div>Eingezahlt</div>
+        <div class="li"><div class="ld" style="background:var(--navy2)"></div>MA-Rendite (zugesagt)</div>
+        <div class="li"><div class="ld" style="background:var(--or)"></div>AG-Rendite (real)</div>
+      </div>
+    </div>
+    <div style="position:relative;height:240px"><canvas id="rendChart" role="img" aria-label="Kapitalentwicklung">Kapitalentwicklung.</canvas></div>
+  </div>
+  <div class="brow fu d3"><a href="#s6" class="bp">Mitarbeiter →</a></div>
+</section>
+
+<div class="sdiv"></div>
+
+<!-- S6 KAPITALFLUSS -->
+<section class="sec" id="s6">
+  <div class="fu"><p class="ey">Schritt 6 — Kapitalfluss</p><h2>Jahresweise Hochrechnung</h2>
+  <p class="slead">Ansparphase: Kapital wächst. Rentenphase: Kapital fließt ab. Transparent dargestellt.</p></div>
+  <div class="mr fu d1">
+    <div class="mc"><div class="ml">Ges.-Kapital aufgebaut</div><div class="mv or" id="cf-m1">—</div></div>
+    <div class="mc ft"><div class="ml">Depot bei Vertragsende</div><div class="mv or" id="cf-m2">—</div></div>
+    <div class="mc"><div class="ml">Kapital- / Rentenzahlungen gesamt</div><div class="mv" id="cf-m3">—</div></div>
+    <div class="mc gn"><div class="ml">Netto-Unternehmenskapital (nach letzter Zahlung)</div><div class="mv gn" id="cf-m4">—</div></div>
+  </div>
+  <div class="cc2 fu d2">
+    <div class="ch">
+      <div class="ct2">Kapitalfluss im Zeitverlauf</div>
+      <div class="leg">
+        <div class="li"><div class="ld" style="background:var(--navy2)"></div>Kapitalaufbau</div>
+        <div class="li"><div class="ld" style="background:var(--green)"></div>Kapitalüberschuss</div>
+        <div class="li"><div class="ld" style="background:var(--red)"></div>Rentenauszahlung</div>
+      </div>
+    </div>
+    <div style="position:relative;height:260px"><canvas id="cfChart" role="img" aria-label="Kapitalfluss">Kapitalfluss.</canvas></div>
+  </div>
+  <div class="cf-card fu" style="margin-top:-1rem">
+    <div class="cf-head">
+      <div class="cf-title">Depot-Stand im Zeitverlauf (Vermögensaufbau &amp; -abbau)</div>
+    </div>
+    <div style="position:relative;height:180px"><canvas id="cfCumChart" role="img" aria-label="Depot-Stand über die Zeit">Depot-Stand.</canvas></div>
+  </div>
+  <div class="fu d3" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:8px;">
+    <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--txm)">Jahrestabelle</div>
+    <button class="bo3" style="font-size:11px;padding:6px 14px;" onclick="toggleTable()">Tabelle ein-/ausblenden</button>
+  </div>
+  <div id="cf-table-wrap" style="display:none" class="cf-scroll fu">
+    <table class="cf-table" id="cf-table"></table>
+  </div>
+  <div class="ins fu"><div class="ii">→</div><div><div class="it" id="i6t">—</div><div class="ix" id="i6x">—</div></div></div>
+  <div class="brow fu"><a href="#s7" class="bp">Vergleich →</a></div>
+</section>
+<div class="sdiv"></div>
+
+<!-- INTERNAL PANEL: hidden in DOM, opened via floating button -->
+<div id="intern-modal" style="display:none;position:sticky;bottom:0;z-index:200;background:rgba(15,37,68,0.55);padding:1.5rem 1rem;">
+  <div style="background:var(--white);border-radius:var(--r);padding:1.75rem;width:min(700px,100%);margin:0 auto;max-height:80vh;overflow-y:auto;border:1px solid var(--bd);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:16px;">🔒</div>
+        <div><div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy)">Interne Kostenparameter</div><div style="font-size:11px;color:var(--txm)">Nur für interne Nutzung — nicht für Kunden sichtbar</div></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button id="cost-toggle-btn" onclick="toggleCosts()" style="display:none;font-family:'Syne',sans-serif;font-size:11px;font-weight:600;padding:6px 12px;border-radius:100px;border:1.5px solid var(--green);background:var(--greenl);color:var(--green);cursor:pointer;">Kosten aktiv</button>
+        <button onclick="lockInternal()" id="lock-btn" style="display:none;font-family:'Inter',sans-serif;font-size:11px;padding:6px 12px;border-radius:100px;border:1px solid var(--bd);background:var(--bg);color:var(--txm);cursor:pointer;">🔒 Sperren</button>
+        <button onclick="closeInternal()" style="background:var(--bg2);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--txm)">×</button>
+      </div>
+    </div>
+    <div class="pw-gate" id="pw-gate-modal">
+      <input type="password" id="pw-input" placeholder="Passwort eingeben..." onkeydown="if(event.key==='Enter')checkPw()" style="flex:1;font-family:'Inter',sans-serif;font-size:13px;padding:8px 12px;border:1px solid var(--bd);border-radius:var(--rs);outline:none;">
+      <button class="bp" onclick="checkPw()" style="padding:8px 16px;font-size:12px">Entsperren</button>
+      <span id="pw-msg" style="font-size:11px;color:var(--red)"></span>
+    </div>
+    <div class="pw-content" id="pw-content">
+      <div style="font-size:11px;color:var(--txm);margin-bottom:1.25rem;padding:.875rem;background:var(--bg);border-radius:var(--rs);line-height:1.6">Kosten fließen in die Netto-Kapitalüberschuss-Berechnung ein. Im Kundengespräch wird <strong>nur der Netto-Kapitalüberschuss</strong> angezeigt — ohne Kostendetails.</div>
+      <div class="cg">
+        <div class="cc">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+            <div><div style="font-size:11px;font-weight:600;color:var(--tx)">PSV-Beitrag</div><div style="font-size:10px;color:var(--txm)">auf Versorgungsvolumen p.a.</div></div>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="cost-psv-on" checked onchange="updateAll()"><span style="font-size:11px;color:var(--txm)">aktiv</span></label>
+          </div>
+          <div class="ct"><span class="cl">PSV-Beitragssatz (‰)</span><span class="cv" id="l-psv">1,2 ‰</span></div>
+          <input type="range" min="0.1" max="5" step="0.1" value="1.2" id="r-psv">
+        </div>
+        <div class="cc">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+            <div><div style="font-size:11px;font-weight:600;color:var(--tx)">UK Einrichtungsgebühr</div><div style="font-size:10px;color:var(--txm)">einmalig auf Versorgungssumme</div></div>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="cost-einr-on" checked onchange="updateAll()"><span style="font-size:11px;color:var(--txm)">aktiv</span></label>
+          </div>
+          <div class="ct"><span class="cl">Einrichtungsgebühr (%)</span><span class="cv" id="l-einr">1,25 %</span></div>
+          <input type="range" min="0.5" max="3" step="0.05" value="1.25" id="r-einr">
+        </div>
+        <div class="cc">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+            <div><div style="font-size:11px;font-weight:600;color:var(--tx)">Jahresgebühr UK (Tarif B125)</div><div style="font-size:10px;color:var(--txm)">250 € + (Anz. MA × 89 €) p.a.</div></div>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="cost-paus-on" checked onchange="updateAll()"><span style="font-size:11px;color:var(--txm)">aktiv</span></label>
+          </div>
+          <div class="ct"><span class="cl">Jahresgebühr aktuell</span><span class="cv" id="l-paus">—</span></div>
+          <div style="font-size:10px;color:var(--txm);margin-top:4px">Formel: 250 + (<span id="paus-ma-disp">5</span> × 89) = <span id="paus-result-disp">695</span> €/Jahr</div>
+          <input type="hidden" id="r-paus" value="89">
+        </div>
+        <div class="cc">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+            <div><div style="font-size:11px;font-weight:600;color:var(--tx)">Investment-Einrichtung</div><div style="font-size:10px;color:var(--txm)">auf Beiträge (max. 35 J. Laufzeit)</div></div>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="cost-inv-on" checked onchange="updateAll()"><span style="font-size:11px;color:var(--txm)">aktiv</span></label>
+          </div>
+          <div class="ct"><span class="cl">Investm.-Gebühr (%)</span><span class="cv" id="l-inv">7,5 %</span></div>
+          <input type="range" min="1" max="15" step="0.5" value="7.5" id="r-inv">
+        </div>
+      </div>
+      <div class="mr" style="grid-template-columns:repeat(4,1fr);margin-top:1rem">
+        <div class="mc"><div class="ml">PSV gesamt</div><div class="mv" id="cost-psv-total">—</div><div class="ms">Laufzeit</div></div>
+        <div class="mc"><div class="ml">UK-Einrichtung</div><div class="mv" id="cost-einr-total">—</div><div class="ms">einmalig</div></div>
+        <div class="mc"><div class="ml">B125-Jahresgebühr</div><div class="mv" id="cost-paus-total">—</div><div class="ms">Laufzeit gesamt</div></div>
+        <div class="mc"><div class="ml">Invest.-Gebühr</div><div class="mv" id="cost-inv-total">—</div><div class="ms">einmalig</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:.75rem">
+        <div class="mc ft" style="border-radius:var(--rs);padding:1rem">
+          <div class="ml">Gesamtkosten brutto</div>
+          <div class="mv" id="cost-total-brutto">—</div>
+          <div class="ms">vor Steuereffekt</div>
+        </div>
+        <div class="mc ft" style="border-radius:var(--rs);padding:1rem">
+          <div class="ml">Gesamtkosten netto (nach Steuer)</div>
+          <div class="mv or" id="cost-total">—</div>
+          <div class="ms">fließen in Netto-Kapitalüberschuss ein</div>
+        </div>
+      </div>
+      <!-- Hinweis Nettokosten -->
+      <div style="margin-top:1rem;padding:.75rem 1rem;background:var(--bg2);border-radius:var(--rs);border-left:3px solid var(--or);font-size:11px;color:var(--txm);line-height:1.65">
+        <strong style="color:var(--tx);font-size:11px">Berechnung Nettogesamtkosten:</strong><br>
+        <span style="color:var(--txm)">
+          <b>Schritt 1:</b> PSV + Einrichtung + Jahresgebühr = Sonstige Bruttokosten → × (1 − Steuersatz) = <em>Sonstige Nettokosten</em><br>
+          <b>Schritt 2:</b> Investmentgebühren (AA%) × Steuersatz = <em>Steuererstattung auf Investment</em><br>
+          <b>Nettogesamtkosten</b> = Sonstige Nettokosten − Steuererstattung Investment
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING INTERNAL BUTTON -->
+<div style="position:sticky;bottom:0;z-index:100;display:flex;justify-content:flex-end;padding:.75rem 1.5rem;pointer-events:none;">
+  <button id="intern-fab" onclick="openInternal()" title="Interne Kostenparameter" style="pointer-events:all;width:44px;height:44px;border-radius:50%;background:var(--navy);border:none;cursor:pointer;box-shadow:0 4px 16px rgba(15,37,68,0.3);display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;color:#fff;font-family:sans-serif;">🔒</button>
+  <button onclick="resetAll()" title="Berechnung zurücksetzen" style="pointer-events:all;width:44px;height:44px;border-radius:50%;background:#3D5070;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(15,37,68,0.3);display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;color:#fff;font-family:sans-serif;">↺</button>
+</div>
+
+<div class="sdiv"></div>
+
+<!-- S7 VERGLEICH -->
+<section class="sec" id="s7">
+  <div class="fu"><p class="ey">Schritt 7 — Die 5 Durchführungswege</p><h2>Warum die Unterstützungskasse?</h2>
+  <p class="slead">Nur einer kombiniert unbegrenzte Beiträge, Bilanzneutralität und Kapitalüberschuss.</p></div>
+  <div class="ww fu d1">
+    <table class="wt">
+      <thead><tr><th>Durchführungsweg</th><th>Beitragslimit</th><th>AG-Beitrag steuerfrei</th><th>SV-frei</th><th>Bilanzneutral</th><th>Kapitalüberschuss</th></tr></thead>
+      <tbody>
+        <tr><td>Direktversicherung <span class="badge bg2">Häufig</span></td><td class="no2">Begrenzt (8.112 €/J.)</td><td class="yes">Ja, bis Limit</td><td class="part">Bis 4.056 €/J.</td><td class="yes">Ja</td><td class="no2">Nein</td></tr>
+        <tr><td>Pensionskasse</td><td class="no2">Begrenzt (8.112 €/J.)</td><td class="yes">Ja, bis Limit</td><td class="part">Bis 4.056 €/J.</td><td class="yes">Ja</td><td class="no2">Nein</td></tr>
+        <tr><td>Pensionsfonds</td><td class="no2">Begrenzt (8.112 €/J.)</td><td class="yes">Ja, bis Limit</td><td class="part">Bis 4.056 €/J.</td><td class="yes">Ja</td><td class="no2">Nein</td></tr>
+        <tr><td>Direktzusage</td><td class="yes">Nein — unbegrenzt</td><td class="yes">Ja, unbegrenzt</td><td class="yes">Ja</td><td class="no2">Nein</td><td class="part">Teilw.</td></tr>
+        <tr class="hl"><td><strong>Unterstützungskasse</strong> <span class="badge bo2">Empfohlen</span></td><td class="yes">Nein — unbegrenzt</td><td class="yes">Ja, unbegrenzt</td><td class="yes">Ja</td><td class="yes">Ja</td><td class="yes">Ja</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="brow fu d2"><a href="#s8" class="bp">Gesamtergebnis →</a></div>
+</section>
+<div class="sdiv"></div>
+
+<!-- S8 ERGEBNIS -->
+<section class="sec" id="s8">
+  <div class="fu"><p class="ey">Schritt 8 — Zusammenfassung</p><h2>Ihr Gesamtergebnis</h2></div>
+  <div class="sb fu d1"><div class="sum-title">Ergebnisübersicht</div><div class="sg" id="sum-grid"></div><div class="stxt" id="sum-text">—</div>
+  <div id="s8-steuer-nachgelagert" style="display:none;margin-top:.75rem;padding:.875rem 1rem;background:linear-gradient(135deg,#1A8C6A15,#1A8C6A08);border:1px solid #1A8C6A40;border-radius:var(--r)">
+    <div style="font-size:10px;font-weight:700;color:#1A8C6A;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem">💡 Steuerersparnis nachgelagerte Besteuerung</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem">
+      <div style="font-size:11px;color:var(--txm)">Steuerersparnis durch niedrigeren Steuersatz im Rentenalter (2,5 % Inflation p.a. auf Grundfreibetrag)</div>
+      <div class="sv" style="font-size:20px;font-weight:700;color:#1A8C6A;font-family:'Syne',sans-serif;white-space:nowrap">—</div>
+    </div>
+  </div></div>
+  <div class="brow fu d2"><a href="#kontakt" class="bp">Angebot anfordern →</a><button class="bo3" onclick="openBeraterDialog()">📄 Angebot erstellen</button></div>
+</section>
+
+<!-- PRINT SECTION -->
+<div id="print-section" style="display:none">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=Inter:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+.ps{font-family:'Inter',sans-serif;color:#1A2840;background:#fff;max-width:800px;margin:0 auto;}
+.ps-page{padding:1.4rem 1.8rem 1rem;page-break-after:always;display:block;box-sizing:border-box;}
+.ps-page-auto{padding:1.4rem 1.8rem 1rem;display:block;box-sizing:border-box;}
+/* Header */
+.ps-hd{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:.5rem;margin-bottom:.75rem;border-bottom:3px solid #0F2544;}
+.ps-hd-claim{font-size:9px;font-weight:400;color:#0F2544;}
+.ps-hd-logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#0F2544;line-height:1.2;}
+.ps-hd-logo span{color:#C0392B;}
+.ps-hd-sub{font-size:10px;color:#0F2544;}
+.ps-hd-meta{text-align:right;font-size:10px;color:#0F2544;line-height:1.8;}
+/* Cover banner */
+.ps-banner{background:#0F2544;border-radius:10px;padding:1rem 1.4rem;margin-bottom:.75rem;display:flex;justify-content:space-between;align-items:center;}
+.ps-banner-text h1{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:#fff;line-height:1.1;margin-bottom:.3rem;}
+.ps-banner-text p{font-size:11px;color:#fff;line-height:1.6;}
+.ps-banner-badge{background:rgba(192,57,43,0.3);border:1px solid rgba(192,57,43,0.6);border-radius:100px;padding:4px 12px;font-size:9px;font-weight:700;color:#E8846A;letter-spacing:.15em;text-transform:uppercase;display:inline-block;margin-bottom:.5rem;}
+.ps-banner-icon{width:70px;height:70px;flex-shrink:0;opacity:.9;}
+/* Section titles */
+.ps-sec-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:#0F2544;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.875rem;padding-bottom:.4rem;border-bottom:2px solid #0F2544;}
+/* KPI row */
+.ps-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem;}
+.ps-kpi{background:#EDF1F7;border-radius:8px;padding:.875rem;text-align:center;border:1px solid #C8D4E8;}
+.ps-kpi-l{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#0F2544;margin-bottom:3px;}
+.ps-kpi-v{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:#0F2544;}
+.ps-kpi-v.or{color:#C0392B;}
+.ps-kpi-v.gn{color:#1A7A50;}
+/* Two columns */
+.ps-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.25rem;}
+.ps-box{background:#EDF1F7;border-radius:8px;padding:1rem 1.125rem;border:1px solid #C8D4E8;}
+.ps-box-or{background:#FEF0ED;border:2px solid #C0392B;border-radius:8px;padding:1rem 1.125rem;}
+.ps-box-gn{background:#ECF7F2;border:2px solid #1A7A50;border-radius:8px;padding:1rem 1.125rem;}
+.ps-box-nv{background:#0F2544;border-radius:8px;padding:1rem 1.125rem;}
+.ps-box h3{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:#0F2544;margin-bottom:.5rem;}
+.ps-box-or h3{color:#C0392B;}
+.ps-box-gn h3{color:#1A7A50;}
+.ps-box-nv h3{color:#fff;}
+.ps-box p,.ps-box-or p,.ps-box-gn p{font-size:10px;color:#0F2544;line-height:1.65;}
+.ps-box-nv p{font-size:10px;color:#fff;line-height:1.65;}
+/* Big number */
+.ps-bignum{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;text-align:center;margin:.5rem 0 .2rem;}
+.ps-bignum.or{color:#C0392B;}
+.ps-bignum.gn{color:#1A7A50;}
+.ps-bigsub{font-size:9px;text-align:center;color:#0F2544;}
+/* Params table */
+.ps-params{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:1.25rem;}
+.ps-params td{padding:5px 8px;border-bottom:1px solid #C8D4E8;}
+.ps-params td:first-child{color:#0F2544;width:45%;font-weight:400;}
+.ps-params td:last-child{font-weight:600;color:#0F2544;}
+.ps-params tr:last-child td{border-bottom:none;}
+/* MA cards */
+.ps-ma-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem;}
+.ps-ma{border:1px solid #C8D4E8;border-radius:8px;padding:.75rem;background:#FAFCFF;}
+.ps-ma-av{width:32px;height:32px;border-radius:50%;background:#0F2544;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:#fff;margin-bottom:.5rem;}
+.ps-ma-name{font-size:11px;font-weight:700;color:#0F2544;margin-bottom:2px;}
+.ps-ma-role{font-size:9px;color:#0F2544;font-weight:400;margin-bottom:.5rem;}
+.ps-ma-row{display:flex;justify-content:space-between;font-size:9px;margin-bottom:2px;}
+.ps-ma-key{color:#0F2544;font-weight:400;}
+.ps-ma-val{font-weight:600;color:#0F2544;}
+.ps-ma-rente{margin-top:6px;padding-top:6px;border-top:1px solid #C8D4E8;}
+.ps-ma-rl{font-size:8px;color:#0F2544;margin-bottom:1px;}
+.ps-ma-rv{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#C0392B;}
+/* Main table */
+.ps-table{width:100%;border-collapse:collapse;font-size:8px;margin-bottom:1rem;}
+.ps-table thead tr{background:#0F2544;}
+.ps-table th{padding:6px 7px;color:#fff;text-align:right;font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+.ps-table th:first-child{text-align:left;}
+.ps-table td{padding:5px 7px;border-bottom:1px solid #C8D4E8;text-align:right;color:#0F2544;white-space:nowrap;}
+.ps-table td:first-child{text-align:left;font-weight:600;}
+.ps-table tr.ph td{background:#1A3A6E;color:#fff;font-weight:700;font-size:9px;}
+.ps-table tr:nth-child(even) td{background:#F2F6FC;}
+.ps-table .pos{color:#1A7A50;font-weight:700;}
+.ps-table .neg{color:#C0392B;font-weight:700;}
+.ps-table .hl{font-weight:700;color:#0F2544;}
+/* Highlight box */
+.ps-hl{background:#0F2544;border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;gap:.875rem;align-items:center;}
+.ps-hl-icon{font-size:22px;flex-shrink:0;}
+.ps-hl-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;}
+.ps-hl-text{font-size:10px;color:#fff;line-height:1.6;}
+/* Advantages */
+.ps-adv-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:1.25rem;}
+.ps-adv{display:flex;gap:7px;align-items:flex-start;padding:.625rem;background:#EDF1F7;border-radius:6px;border:1px solid #C8D4E8;}
+.ps-adv-icon{width:22px;height:22px;border-radius:50%;background:#0F2544;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.ps-adv-title{font-size:10px;font-weight:700;color:#0F2544;margin-bottom:1px;}
+.ps-adv-text{font-size:9px;color:#0F2544;font-weight:400;line-height:1.5;}
+/* Compare */
+.ps-cmp{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:1.25rem;}
+.ps-cmp-item{border-radius:6px;padding:.625rem;border:1px solid #C8D4E8;text-align:center;background:#FAFCFF;}
+.ps-cmp-item.best{border:2px solid #C0392B;background:#FEF0ED;}
+.ps-cmp-name{font-size:9px;font-weight:700;color:#0F2544;margin-bottom:5px;line-height:1.3;}
+.ps-cmp-row{display:flex;justify-content:space-between;font-size:8.5px;margin-bottom:2px;}
+.ps-cmp-k{color:#0F2544;font-weight:400;}
+.ps-yes{color:#1A7A50;font-weight:700;}
+.ps-no{color:#C0392B;font-weight:700;}
+/* Steps */
+.ps-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem;}
+.ps-step{text-align:center;padding:.875rem;background:#EDF1F7;border-radius:8px;border:1px solid #C8D4E8;}
+.ps-step-num{width:28px;height:28px;border-radius:50%;background:#0F2544;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:#fff;}
+.ps-step-title{font-size:10px;font-weight:700;color:#0F2544;margin-bottom:3px;}
+.ps-step-text{font-size:9px;color:#0F2544;font-weight:400;line-height:1.5;}
+/* Disclaimer */
+.ps-disc{background:#EDF1F7;border:1px solid #C8D4E8;border-radius:6px;padding:.875rem;font-size:8.5px;color:#0F2544;line-height:1.6;margin-top:auto;}
+.ps-disc strong{color:#0F2544;font-size:9px;}
+/* Footer */
+.ps-ft{margin-top:.75rem;padding-top:.5rem;border-top:1px solid #C8D4E8;display:flex;justify-content:space-between;font-size:8px;color:#0F2544;}
+.ps-divider{height:1px;background:#C8D4E8;margin:.875rem 0;}
+</style>
+<div class="ps" id="ps-root">
+<!-- dynamically filled by prepPrint() -->
+</div>
+</div>
+
+<!-- RECHTLICHE HINWEISE -->
+  <div style="margin:1.5rem 0 0;padding:1rem 1.25rem;background:rgba(15,37,68,0.04);border-radius:8px;border:1px solid rgba(15,37,68,0.1);font-size:10px;color:#6B7F9A;line-height:1.6">
+    <strong style="color:#0F2544;font-size:10px">&#9888; Rechtlicher Hinweis:</strong>
+    Alle Berechnungen &#8212; insbesondere zur &sect; 4d-Dotierung, zu Kassenverm&ouml;gen, Zinsen und Steuererssparnissen &#8212; sind <strong>unverbindliche N&auml;herungs- und Sch&auml;tzwerte</strong> auf Basis vereinfachter Annahmen.
+    Sie stellen <strong>keine Steuer- oder Rechtsberatung</strong> dar. Die CEB Bankshop AG ist als Finanzdienstleistungsvermittler t&auml;tig und erbringt ausschlie&szlig;lich Vermittlungsleistungen.
+    F&uuml;r verbindliche Ausk&uuml;nfte wenden Sie sich bitte an einen zugelassenen Steuer- oder Rechtsberater. Alle Angaben ohne Gew&auml;hr.
+  </div>
+  <!-- FOOTER -->
+      <footer style="margin-top:2rem;padding:1rem 0;border-top:1px solid var(--bd);font-size:10px;color:var(--txm);text-align:center;line-height:2">
+    <div>CEB Bankshop AG &middot; Stallbaumstra&szlig;e 11 &middot; 04155 Leipzig &middot; <a href="https://www.bankshop.de/impressum.html" target="_blank" style="color:var(--txm);text-decoration:underline">Impressum</a> &middot; <a href="https://www.bankshop.de/datenschutz.html" target="_blank" style="color:var(--muted);text-decoration:underline">Datenschutz</a></div>
+    <div>Alle Berechnungen sind unverbindliche N&auml;herungswerte &mdash; keine Steuer- oder Rechtsberatung &mdash; Alle Angaben ohne Gew&auml;hr</div>
+  </footer>
+
+<script>
+// ─── STATE ───
+let employees=[], currentMode='p', fm='ag', rdChart=null, cfChart=null;
+const PW='intern2025';
+
+// ─── UTILS ───
+function fe(n){if(Math.abs(n)>=1e6)return(n/1e6).toFixed(2).replace('.',',')+' Mio. €';if(Math.abs(n)>=1000)return Math.round(n/1000)+'T€';return Math.round(n).toLocaleString('de-DE')+' €';}
+function fp(n){return(+n).toFixed(1).replace('.',',')+' %';}
+function fv(m,y,r){if(y<=0)return 0;if(r<=0)return m*12*y;const rm=r/12,n=y*12;return m*((Math.pow(1+rm,n)-1)/rm)*(1+rm);}
+function g(id){return+document.getElementById(id).value;}
+function setRC(el){const p=((+el.value-+el.min)/(+el.max-+el.min)*100).toFixed(1);el.style.background=`linear-gradient(to right,#E8621A 0%,#E8621A ${p}%,#EDF0F7 ${p}%)`;}
+document.querySelectorAll('input[type=range]').forEach(el=>{setRC(el);el.addEventListener('input',()=>{setRC(el);updateAll();});});
+
+// ─── MODE ───
+function setFM(f){
+  fm=f;
+  ['ag','an','ko'].forEach(x=>{document.getElementById('fm-'+x).classList.toggle('act',x===f);});
+  const hints={
+    ag:'AG zahlt den vollständigen Beitrag — steuerlich als Betriebsausgabe abzugsfähig.',
+    an:'Nur der Arbeitnehmer wandelt Gehalt um. Kein AG-Beitrag, kein AG-Zuschuss (kann auf 0 gesetzt werden).',
+    ko:'Kombination: AG zahlt Grundversorgung + AN wandelt zusätzlich um. Ein AG-Zuschuss auf den AN-Betrag ist freiwillig (bei pauschal dotierter UK keine gesetzliche Pflicht).'
+  };
+  document.getElementById('fm-hint').textContent=hints[f];
+  const showAN=f==='an'||f==='ko';
+  document.getElementById('an-sliders').style.display=showAN?'grid':'none';
+  document.getElementById('an-infobox').style.display=showAN?'block':'none';
+  document.getElementById('ef-an-block').style.display=showAN?'block':'none';
+  document.getElementById('ef-ag-btn').style.display=showAN?'none':'block';
+  if(f==='an'){
+    // Reiner AN-Modus: AG-Beitrag = 0 (kein AG-Beitrag), AG-Zuschuss = 0 % (keine gesetzliche Pflicht bei pauschal dotierter UK)
+    const btSlider=document.getElementById('r-bt');
+    btSlider.value=0; setRC(btSlider);
+    document.getElementById('l-bt').textContent='0 €';
+    document.getElementById('r-agz-pct').value=0; setRC(document.getElementById('r-agz-pct'));
+    // Einrichtungsgebühr AN/Kombi = 2.0%
+    const einrAN=document.getElementById('r-einr');
+    if(einrAN){einrAN.value=2.0;setRC(einrAN);document.getElementById('l-einr').textContent='2,00 %';}
+    // Update AN slider label
+    const anSliderLabel=document.querySelector('#an-sliders .cc:first-child .cl');
+    if(anSliderLabel) anSliderLabel.textContent='AN-Eigenanteil (Entgeltumwandlung)';
+    const agzLabel=document.querySelector('#an-sliders .cc:last-child .cl');
+    if(agzLabel) agzLabel.textContent='AG-Zuschuss (optional, 0 = kein Zuschuss)';
+  } else if(f==='ag'){
+    const btSlider=document.getElementById('r-bt');
+    btSlider.value=250; setRC(btSlider);
+    document.getElementById('l-bt').textContent='250 €';
+    // Einrichtungsgebühr AG = 1.25%
+    const einrAG=document.getElementById('r-einr');
+    if(einrAG){einrAG.value=1.25;setRC(einrAG);document.getElementById('l-einr').textContent='1,25 %';}
+  } else if(f==='ko'){
+    // Kombi: AG-Beitrag bleibt, AG-Zuschuss ist freiwillig (kein Mindestzuschuss)
+    // Einrichtungsgebühr Kombi = 2.0%
+    const einrKO=document.getElementById('r-einr');
+    if(einrKO){einrKO.value=2.0;setRC(einrKO);document.getElementById('l-einr').textContent='2,00 %';}
+    const agzLabel=document.querySelector('#an-sliders .cc:last-child .cl');
+    if(agzLabel) agzLabel.textContent='AG-Zuschuss auf AN-Betrag (freiwillig)';
+  }
+  updateAll();
+}
+
+function setMode(m){
+  currentMode=m;
+  // FM-Block und Individual-Block ein/ausblenden
+  const fmBlock    = document.getElementById('fm-block');
+  const indivBlock = document.getElementById('indiv-block');
+  const pausBlock  = document.getElementById('pauschal-block');
+  if(fmBlock)    fmBlock.style.display    = m==='d'?'block':'none';
+  if(indivBlock) indivBlock.style.display = m==='d'?'block':'none';
+  document.getElementById('mt-p').classList.toggle('act',m==='p');
+  document.getElementById('mt-d').classList.toggle('act',m==='d');
+
+  // Sliders that have no meaning in individual mode
+  const pauschSliders=['r-ma','r-bt','r-jr'];
+  const pauschLabels=['l-ma','l-bt','l-jr'];
+
+  if(m==='d'){
+    // Individuell: grey out and zero pauschal-only sliders
+    pauschSliders.forEach((id,i)=>{
+      const el=document.getElementById(id);
+      if(el){el.disabled=true;el.style.opacity='0.35';}
+      const lbl=document.getElementById(pauschLabels[i]);
+      if(lbl){lbl.style.opacity='0.35';}
+    });
+    // Grey out the pauschal-block label row too
+    const pBlock=document.getElementById('pauschal-block');
+    if(pBlock){
+      const note=pBlock.querySelector('.pauschal-note');
+      if(!note){
+        const div=document.createElement('div');
+        div.className='pauschal-note';
+        div.style.cssText='font-size:10px;color:var(--or);padding:.5rem .875rem;background:var(--org);border-radius:var(--rs);margin-top:.5rem';
+        div.textContent='ℹ️ Anzahl MA, Beitrag und Laufzeit werden aus den eingetragenen Mitarbeitern berechnet — Schieberegler deaktiviert.';
+        pBlock.appendChild(div);
+      }
+    }
+  } else {
+    // Pauschal: re-enable sliders
+    pauschSliders.forEach((id,i)=>{
+      const el=document.getElementById(id);
+      if(el){el.disabled=false;el.style.opacity='';}
+      const lbl=document.getElementById(pauschLabels[i]);
+      if(lbl){lbl.style.opacity='';}
+    });
+    // Remove note
+    const pBlock=document.getElementById('pauschal-block');
+    if(pBlock){
+      const note=pBlock.querySelector('.pauschal-note');
+      if(note)note.remove();
+    }
+  }
+
+  updateModeDisplay();updateAll();
+}
+function updateModeDisplay(){
+  const hasMA=employees.length>0;
+  const useD=currentMode==='d'&&hasMA;
+  document.getElementById('pauschal-block').style.display='block';
+  document.getElementById('detail-block').style.display=useD?'block':'none';
+  const hint=document.getElementById('mode-hint');
+  if(useD){hint.textContent=employees.length+' MA aktiv — individuelle Daten';hint.className='mode-hint live';}
+  else if(hasMA){hint.textContent=employees.length+' MA eingetragen — Schieberegler aktiv';hint.className='mode-hint';}
+  else{hint.textContent='Schieberegler aktiv';hint.className='mode-hint';}
+}
+function syncSt(el){setRC(el);document.getElementById('r-st').value=el.value;setRC(document.getElementById('r-st'));document.getElementById('l-st').textContent=el.value+' %';document.getElementById('l-st2').textContent=el.value+' %';updateAll();}
+function syncRk(el){setRC(el);document.getElementById('r-rk').value=el.value;setRC(document.getElementById('r-rk'));document.getElementById('l-rk').textContent=fp(el.value/10);document.getElementById('l-rk2').textContent=fp(el.value/10);updateAll();}
+
+// ─── INTERNAL PANEL ───
+let pwUnlocked=false, costsActive=true;
+function openInternal(){const m=document.getElementById('intern-modal');m.style.display='flex';}
+function closeInternal(){const m=document.getElementById('intern-modal');m.style.display='none';}
+document.getElementById('intern-modal').addEventListener('click',function(e){if(e.target===this)closeInternal();});
+function lockInternal(){
+  pwUnlocked=false;
+  document.getElementById('pw-content').classList.remove('unlocked');
+  document.getElementById('pw-gate-modal').style.display='flex';
+  document.getElementById('pw-input').value='';
+  document.getElementById('lock-btn').style.display='none';
+  document.getElementById('cost-toggle-btn').style.display='none';
+  document.getElementById('intern-fab').style.background='var(--navy)';
+  document.getElementById('intern-fab').textContent='🔒';
+  updateAll();
+}
+function toggleCosts(){
+  costsActive=!costsActive;
+  const btn=document.getElementById('cost-toggle-btn');
+  if(costsActive){btn.textContent='Kosten aktiv';btn.style.background='var(--greenl)';btn.style.borderColor='var(--green)';btn.style.color='var(--green)';}
+  else{btn.textContent='Ohne Kosten';btn.style.background='var(--bg2)';btn.style.borderColor='var(--bd)';btn.style.color='var(--txm)';}
+  updateAll();
+}
+function checkPw(){
+  const v=document.getElementById('pw-input').value;
+  if(v===PW){
+    pwUnlocked=true;
+    costsActive=true;
+    document.getElementById('pw-content').classList.add('unlocked');
+    document.getElementById('pw-gate-modal').style.display='none';
+    document.getElementById('lock-btn').style.display='inline-flex';
+    document.getElementById('cost-toggle-btn').style.display='inline-flex';
+    document.getElementById('intern-fab').style.background='#1A8C6A';
+    document.getElementById('intern-fab').textContent='⚙️';
+    document.getElementById('pw-msg').textContent='';
+    updateAll();
+  }else{document.getElementById('pw-msg').textContent='Falsches Passwort';}
+}
+function toggleTable(){const w=document.getElementById('cf-table-wrap');w.style.display=w.style.display==='none'?'block':'none';}
+
+// ─── EMPLOYEES ───
+function editEmployee(id){
+  const e=employees.find(x=>x.id===id);
+  if(!e)return;
+  // Fill form with employee data
+  document.getElementById('ef-name').value=e.name;
+  document.getElementById('ef-age').value=e.age;
+  document.getElementById('ef-bt').value=e.bt;
+  document.getElementById('ef-rba').value=e.rba||67;
+  document.getElementById('ef-rz').value=e.rz||2;
+  document.getElementById('ef-pay').value=e.pay||'rente';
+  document.getElementById('ef-rf').value=e.rf||16;
+  document.getElementById('ef-rd').value=e.rd||20;
+  if(document.getElementById('ef-an'))document.getElementById('ef-an').value=e.an||0;
+  if(document.getElementById('ef-agzp'))document.getElementById('ef-agzp').value=(e.agzp!==undefined?e.agzp:0);
+  // Remove old entry
+  employees=employees.filter(x=>x.id!==id);
+  renderEmployees();
+  updateAll();
+  // Highlight form
+  const form=document.querySelector('.emp-form');
+  if(form){
+    form.style.borderColor='var(--or)';
+    form.style.background='rgba(232,98,26,0.03)';
+    document.getElementById('ef-name').focus();
+    setTimeout(()=>{form.style.borderColor='';form.style.background='';},3000);
+  }
+  // Scroll to form
+  form&&form.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function addEmployee(){
+  const name=document.getElementById('ef-name').value.trim()||'Mitarbeiter '+(employees.length+1);
+  const age=parseInt(document.getElementById('ef-age').value)||35;
+  const btRaw=document.getElementById('ef-bt').value;
+  const bt=btRaw===''?250:parseInt(btRaw)||0;  // 0 erlaubt wenn AG nichts zahlt
+  const rba=parseInt(document.getElementById('ef-rba').value)||67;
+  const rz=parseFloat(document.getElementById('ef-rz').value)||2;
+  const pay=document.getElementById('ef-pay').value;
+  const rf=parseInt(document.getElementById('ef-rf').value)||16;
+  const rd=parseInt(document.getElementById('ef-rd').value)||20;
+  const lz=Math.max(1,rba-age);
+  const anRaw=document.getElementById('ef-an').value;
+  const an=anRaw===''?0:parseInt(anRaw)||0;
+  const agzpRaw=document.getElementById('ef-agzp').value;
+  const agzp=agzpRaw===''?0:(parseFloat(agzpRaw)||0);
+  const stk=parseFloat(document.getElementById('ef-stk').value)||0.30;
+  const agz=Math.round(an*agzp/100);
+  const totalBt=bt+an+agz;
+  employees.push({id:Date.now(),name,age,bt,rba,rz,pay,rf,rd,lz,an,agzp,agz,stk,totalBt});
+  document.getElementById('ef-name').value='';
+  if(employees.length===1){setMode('d');}
+  renderEmployees();updateModeDisplay();updateAll();
+}
+function removeEmployee(id){
+  employees=employees.filter(e=>e.id!==id);
+  if(employees.length===0){setMode('p');}
+  renderEmployees();updateModeDisplay();updateAll();
+}
+function initials(n){return n.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'MA';}
+
+function renderEmployees(){
+  const list=document.getElementById('emp-list');
+  if(!employees.length){list.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--txm);font-size:13px;border:1px dashed var(--bd);border-radius:var(--rs)">Noch keine Mitarbeiter eingetragen.</div>';return;}
+  const rk=g('r-rk')/1000;
+  list.innerHTML=employees.map(e=>{
+    const total=e.totalBt||e.bt;
+    const kapMA=fv(total,e.lz,e.rz/100);
+    let rentStr='';
+    if(e.pay==='rente'){const mr=Math.round(kapMA/((e.rf||16)*12));rentStr=mr.toLocaleString('de-DE')+' €/Monat ('+(e.rf||16)+' J.)';}
+    else{rentStr=fe(kapMA)+' Einmalkapital';}
+    const hasAN=(e.an||0)>0;
+    return`<div class="ecard" id="ecard-${e.id}">
+      <div style="position:absolute;top:8px;right:8px;display:flex;gap:4px">
+        <button class="del" style="position:static" onclick="editEmployee(${e.id})" title="Bearbeiten">✏️</button>
+        <button class="del" style="position:static" onclick="removeEmployee(${e.id})" title="Löschen">×</button>
+      </div>
+      <div class="eav">${initials(e.name)}</div>
+      <div class="en">${e.name}</div>
+      <div class="er">Rentenbeginn: ${e.rba} · ${e.pay==='rente'?'Rente':'Kapital'}</div>
+      ${hasAN?`<div style="display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap">
+        <span style="font-size:9px;padding:2px 7px;border-radius:100px;background:rgba(26,140,106,0.1);color:var(--green);font-weight:600">AG ${e.bt}€</span>
+        <span style="font-size:9px;padding:2px 7px;border-radius:100px;background:rgba(26,140,106,0.1);color:var(--green);font-weight:600">AN ${e.an}€</span>
+        <span style="font-size:9px;padding:2px 7px;border-radius:100px;background:rgba(26,140,106,0.1);color:var(--green);font-weight:600">Zusch. ${e.agz}€</span>
+      </div>`:''}
+      <div class="ew"><span class="ek">Alter</span><span class="ev">${e.age} J.</span></div>
+      <div class="ew"><span class="ek">${hasAN?'Gesamtbeitrag UK':'Monatsbeitrag AG'}</span><span class="ev" style="color:var(--or)">${total.toLocaleString('de-DE')} €</span></div>
+      <div class="ew"><span class="ek">Laufzeit bis Rente</span><span class="ev">${e.lz} J.</span></div>
+      <div class="ew"><span class="ek">Renditezusage</span><span class="ev">${fp(e.rz)}</span></div>
+      <div class="erent"><div class="erl">Versorgungsleistung ab ${e.rba}</div><div class="erv">${rentStr}</div></div>
+      <!-- Steuervergleich optional -->
+      <div style="margin-top:.5rem">
+        <button onclick="toggleSteuerPanel(${e.id})" id="st-btn-${e.id}" style="width:100%;padding:.4rem .6rem;background:transparent;border:1px dashed var(--bd);border-radius:6px;cursor:pointer;font-size:10px;color:var(--txm);text-align:left;display:flex;justify-content:space-between;align-items:center">
+          <span id="st-btn-label-${e.id}">💡 Steuerersparnis nachgelagerte Besteuerung (optional)</span>
+          <span id="st-arrow-${e.id}" style="font-size:12px;margin-left:.5rem">▼</span>
+        </button>
+        <div id="st-panel-${e.id}" style="display:none;padding:.75rem;background:#F4F6FA;border-radius:0 0 8px 8px;border:1px solid var(--bd);border-top:none">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.6rem;align-items:end">
+            <div>
+              <label style="font-size:9px;font-weight:700;color:var(--tx);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:.3rem">Jahreseinkommen heute (zvE)</label>
+              <input type="number" id="zve-${e.id}" placeholder="z.B. 120.000 €" min="0" step="1000"
+                style="width:100%;padding:.5rem .65rem;border:1.5px solid var(--bd);border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff"
+                oninput="updateSteuerPanel(${e.id})">
+            </div>
+            <div>
+              <label style="font-size:9px;font-weight:700;color:var(--tx);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:.3rem">Sonst. Renteneinkommen p.a.</label>
+              <input type="number" id="rente-sonst-${e.id}" placeholder="z.B. 15.000 € p.a." min="0" step="500"
+                style="width:100%;padding:.5rem .65rem;border:1.5px solid var(--bd);border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff"
+                oninput="updateSteuerPanel(${e.id})">
+            </div>
+          </div>
+          ${e.pay==='kapital' ? `<div style="margin-bottom:.6rem">
+            <label style="display:flex;align-items:center;gap:.4rem;font-size:11px;color:var(--tx);cursor:pointer">
+              <input type="checkbox" id="fuenftel-${e.id}" onchange="updateSteuerPanel(${e.id})" style="width:15px;height:15px;cursor:pointer">
+              Fünftelregelung anwenden (§ 34 EStG) — steuerlich günstigere Verteilung der Kapitalabfindung auf 5 Jahre
+            </label>
+          </div>` : ''}
+          <div id="st-result-${e.id}" style="display:none"></div>
+        </div>
+      </div>
+      <div class="edot" id="edot-${e.id}"></div>
+    </div>`;
+  }).join('');
+
+  // ── Nach Rendern: gespeicherte Steuer-Werte wiederherstellen ──
+  employees.forEach(e=>{
+    if(!e._steuerVorteil || !e._steuerVorteil.zvE) return;
+    const zveEl   = document.getElementById('zve-'+e.id);
+    const sonstEl = document.getElementById('rente-sonst-'+e.id);
+    if(zveEl)   zveEl.value   = e._steuerVorteil.zvE;
+    if(sonstEl) sonstEl.value = e._steuerVorteil.sonst||0;
+    // Ergebnis anzeigen
+    const resultEl = document.getElementById('st-result-'+e.id);
+    if(resultEl){
+      updateSteuerPanel(e.id);
+    }
+    // Button-Label mit gespeicherten Werten anzeigen
+    const btnLabel = document.getElementById('st-btn-label-'+e.id);
+    const btn      = document.getElementById('st-btn-'+e.id);
+    if(btnLabel && e._steuerVorteil.vorteilGesamt>0){
+      btnLabel.innerHTML = '💡 Steuerersparnis: <b style="color:#1A8C6A">'
+        +fe(e._steuerVorteil.vorteilGesamt)+'</b>'
+        +' &nbsp;·&nbsp; heute '+e._steuerVorteil.grenzHoute+'%'
+        +' → Rente '+e._steuerVorteil.grenzRente+'%'
+        +' <span style="font-size:9px;color:var(--txm)">(zvE: '
+        +fe(e._steuerVorteil.zvE)+' €/J.)</span>';
+      if(btn){
+        btn.style.borderColor='#1A8C6A';
+        btn.style.borderStyle='solid';
+        btn.style.color='var(--tx)';
+      }
+    }
+  });
+}
+
+// ─── COSTS ───
+function calcCosts(gb, versVolumen, ma_count, avgLz, st){
+  if(!pwUnlocked || !costsActive) return 0;
+
+  // ── SCHRITT 1: Sonstige Kosten (PSV + Einrichtung + Jahresgebühr) ──
+  // Diese sind Betriebsausgaben → Netto = Brutto × (1 − Steuersatz)
+  let sonstigeBrutto = 0;
+
+  // PSV-Beitrag (‰ auf Versorgungsvolumen × Laufzeit)
+  if(document.getElementById('cost-psv-on').checked){
+    const psv = versVolumen * (g('r-psv')/1000) * avgLz;
+    document.getElementById('cost-psv-total').textContent = fe(psv)+' (brutto)';
+    sonstigeBrutto += psv;
+  } else document.getElementById('cost-psv-total').textContent = '—';
+
+  // Einrichtungsgebühr UK
+  if(document.getElementById('cost-einr-on').checked){
+    const einr = versVolumen * (g('r-einr')/100);
+    document.getElementById('cost-einr-total').textContent = fe(einr)+' (brutto)';
+    sonstigeBrutto += einr;
+  } else document.getElementById('cost-einr-total').textContent = '—';
+
+  // Jahresgebühr Unterstützungskasse (B125: 250€ + 89€ je MA × Laufzeit)
+  const b125_annual = 250 + (ma_count * 89);
+  document.getElementById('l-paus').textContent = b125_annual.toLocaleString('de-DE')+' €/J.';
+  document.getElementById('paus-ma-disp').textContent = ma_count;
+  document.getElementById('paus-result-disp').textContent = b125_annual.toLocaleString('de-DE');
+  if(document.getElementById('cost-paus-on').checked){
+    const b125_total = b125_annual * avgLz;
+    document.getElementById('cost-paus-total').textContent = fe(b125_total);
+    sonstigeBrutto += b125_total;
+  } else document.getElementById('cost-paus-total').textContent = '—';
+
+  // Netto sonstige Kosten (nach Steuerentlastung)
+  const sonstigeNetto = sonstigeBrutto * (1 - st);
+
+  // ── SCHRITT 2: Investmentgebühren (Ausgabeaufschlag) ──
+  // Diese wurden bereits vom Depot abgezogen (in simDepotMA).
+  // Da sie steuerlich absetzbar sind, entsteht eine Steuererstattung
+  // die die Gesamtkosten reduziert.
+  let invBrutto = 0;
+  if(document.getElementById('cost-inv-on').checked){
+    // Gesamtbeitrag aller MA × AA%
+    invBrutto = gb * (g('r-inv')/100);
+    document.getElementById('cost-inv-total').textContent = fe(invBrutto)+' (brutto)';
+  } else document.getElementById('cost-inv-total').textContent = '—';
+
+  // Steuererstattung auf Investmentgebühren
+  const invSteuererstattung = invBrutto * st;
+
+  // ── SCHRITT 3: Gesamter Nettokostenabzug ──
+  // = Netto sonstige Kosten − Steuererstattung aus Investmentgebühren
+  const gesamtNetto = Math.max(0, sonstigeNetto - invSteuererstattung);
+
+  // Gesamtanzeige
+  const totalBrutto = sonstigeBrutto + invBrutto;
+  document.getElementById('cost-total-brutto').textContent = fe(totalBrutto);
+  document.getElementById('cost-total').textContent        = fe(gesamtNetto);
+
+  return gesamtNetto; // wird vom Kapitalüberschuss abgezogen
+}
+
+// ─── MAIN ───
+
+// ── § 4d Steuerberechnung für Hauptrechner ──
+function calc4dSteuer(useD, employees, avgLz, avgRz, totalBtP, ma_count, st, rk){
+  // Hilfsfunktion: Kapital bei Rentenbeginn (jährliche Annuität)
+  function fvJaehrlich(btMonat, lz, rJaehrl){
+    if(lz<=0) return 0;
+    const btJahr = btMonat * 12;
+    if(rJaehrl<=0) return btJahr * lz;
+    return btJahr * ((Math.pow(1+rJaehrl, lz)-1) / rJaehrl);
+  }
+
+  // Jahressimulation für einen MA
+  function simMA(btMonat, lz, rzJaehrl, pay, rf, steuersatz){
+    const fvPE = fvJaehrlich(btMonat, lz, rzJaehrl);
+    let maxReserve, annualMaxDot;
+    if(pay==='rente'){
+      const rentenfaktor = rf || 16;
+      const jahresRente  = fvPE / rentenfaktor;
+      maxReserve   = jahresRente * 2;
+      annualMaxDot = jahresRente * 0.25;
+    } else {
+      maxReserve   = fvPE * 0.20;
+      annualMaxDot = fvPE * 0.025;
+    }
+    let reserve=0, totalSt=0, totalDot=0, totalZins=0;
+    for(let yr=1; yr<=lz; yr++){
+      const kasseStart = reserve;
+      const interest   = reserve * 0.06;
+      const remaining  = maxReserve - reserve - interest;
+      const dotation   = Math.max(0, Math.min(annualMaxDot, remaining));
+      // Dotierung: nur bis maxReserve steuerlich absetzbar
+      const inDotPhase = kasseStart < maxReserve;
+      const stDot      = inDotPhase ? dotation * steuersatz : 0;
+      // Zinsen: über gesamte Laufzeit steuerlich absetzbar
+      const stZins     = interest * steuersatz;
+      totalSt         += stDot + stZins;
+      totalDot        += dotation;
+      totalZins       += interest;
+      // loanBalanceNeu = loanBalanceAlt × 1,06 + Dotierung
+      reserve          = reserve * 1.06 + dotation;
+    }
+    return {steuer: totalSt, dotierung: totalDot, zinsen: totalZins};
+  }
+
+  let totalSteuer=0, totalDotierung=0, totalZinsen=0;
+
+  if(useD && employees.length>0){
+    employees.forEach(e=>{
+      const bt  = e.totalBt||e.bt;
+      const lz  = e.lz;
+      const rz  = e.rz/100;
+      const pay = e.pay||'kapital';
+      const rf  = e.rf||16;
+      const res = simMA(bt, lz, rz, pay, rf, st);
+      totalSteuer    += res.steuer;
+      totalDotierung += res.dotierung;
+      totalZinsen    += res.zinsen;
+    });
+  } else {
+    const res  = simMA(totalBtP, avgLz, avgRz/100, 'kapital', 16, st);
+    totalSteuer    = res.steuer    * ma_count;
+    totalDotierung = res.dotierung * ma_count;
+    totalZinsen    = res.zinsen    * ma_count;
+  }
+
+  return {steuer4d: Math.round(totalSteuer), dotierung4d: Math.round(totalDotierung), zinsen4d: Math.round(totalZinsen)};
+}
+
+// ── § 4d Steuer-Tabelle Toggle ──
+function toggleSteuerTabelle(){
+  const wrap  = document.getElementById('steuer-tab-wrap');
+  const arrow = document.getElementById('steuer-tab-arrow');
+  const open  = wrap.style.display === 'none';
+  wrap.style.display  = open ? 'block' : 'none';
+  arrow.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+  if(open) buildSteuerTabelle();
+}
+
+function toggleMaLeistung(){
+  const wrap  = document.getElementById('ma-leist-wrap');
+  const arrow = document.getElementById('ma-leist-arrow');
+  const open  = wrap.style.display === 'none';
+  wrap.style.display    = open ? 'block' : 'none';
+  arrow.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+  if(open) buildMaLeistung();
+}
+
+function buildMaLeistung(){
+  const tbl = document.getElementById('ma-leist-table');
+  if(!tbl) return;
+  if(!employees.length){ tbl.innerHTML=''; return; }
+
+  const thead = `<thead><tr style="background:var(--navy);color:#fff">
+    <th style="padding:.625rem .75rem;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Mitarbeiter</th>
+    <th style="padding:.625rem .75rem;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Alter</th>
+    <th style="padding:.625rem .75rem;text-align:right;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">AG-Beitrag/M.</th>
+    <th style="padding:.625rem .75rem;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Laufzeit</th>
+    <th style="padding:.625rem .75rem;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Rentenbeginn</th>
+    <th style="padding:.625rem .75rem;text-align:right;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Kapitalzusage</th>
+    <th style="padding:.625rem .75rem;text-align:right;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Versorgungsleistung</th>
+  </tr></thead>`;
+
+  const rows = employees.map((e,i)=>{
+    const total = e.totalBt||e.bt;
+    const kapMA = fv(total, e.lz, e.rz/100);
+    let leistStr, leistSub;
+    if(e.pay==='rente'){
+      const mr = Math.round(kapMA/((e.rf||16)*12));
+      leistStr = mr.toLocaleString('de-DE')+' €/Monat';
+      leistSub = '('+(e.rf||16)+' J. Rente)';
+    } else {
+      leistStr = fe(kapMA);
+      leistSub = '(Einmalkapital)';
+    }
+    const bg = i%2===0 ? 'var(--white)' : 'var(--bg2)';
+    return `<tr style="background:${bg};border-bottom:1px solid var(--bd)">
+      <td style="padding:.625rem .75rem;font-weight:600;color:var(--tx)">${e.name}</td>
+      <td style="padding:.625rem .75rem;text-align:center;color:var(--txm)">${e.age}</td>
+      <td style="padding:.625rem .75rem;text-align:right;color:var(--txm)">${total.toLocaleString('de-DE')} €</td>
+      <td style="padding:.625rem .75rem;text-align:center;color:var(--txm)">${e.lz} J.</td>
+      <td style="padding:.625rem .75rem;text-align:center;color:var(--txm)">ab ${e.rba||67}</td>
+      <td style="padding:.625rem .75rem;text-align:right;color:var(--tx);font-weight:600">${fe(kapMA)}</td>
+      <td style="padding:.625rem .75rem;text-align:right;color:var(--or);font-weight:700">${leistStr} <span style="font-size:9px;color:var(--txm);font-weight:400">${leistSub}</span></td>
+    </tr>`;
+  }).join('');
+
+  tbl.innerHTML = thead + '<tbody>' + rows + '</tbody>';
+}
+
+function buildSteuerTabelle(){
+  const tbl = document.getElementById('steuer-tab-main');
+  if(!tbl) return;
+
+  const useD    = currentMode==='d' && employees.length>0;
+  const st      = g('r-st')/100;
+  const avgLz   = useD ? Math.round(employees.reduce((s,e)=>s+e.lz,0)/employees.length) : g('r-jr');
+  const avgRz   = useD ? employees.reduce((s,e)=>s+e.rz,0)/employees.length : g('r-rz')/10;
+  const totalBtP= g('r-bt');
+  const ma_count= useD ? employees.length : g('r-ma');
+
+  // Baue Jahreszeilen aus allen MAs
+  // simRows: IDENTISCHE Logik wie simMA — fvPE als Obergrenze, rf als Rentenfaktor
+  function simRows(btMonat, lz, rzJaehrl, pay, rf, steuersatz, label){
+    // Kapitalzusage berechnen
+    const btJahr = btMonat * 12;
+    const fvPE   = rzJaehrl<=0 ? btJahr*lz : btJahr*((Math.pow(1+rzJaehrl,lz)-1)/rzJaehrl);
+
+    // § 4d Grenzen je nach Zusageart
+    let maxReserve, annualMaxDot;
+    if(pay==='rente'){
+      const jR     = fvPE/(rf||16);  // Jahresrente
+      maxReserve   = jR * 2;         // max. 200% der Jahresrente
+      annualMaxDot = jR * 0.25;      // max. 25% der Jahresrente p.a.
+    } else {
+      maxReserve   = fvPE * 0.20;    // max. 20% der Kapitalzusage
+      annualMaxDot = fvPE * 0.025;   // max. 2,5% der Kapitalzusage p.a.
+    }
+
+    const rows=[]; let reserve=0, kumulSt=0;
+    for(let yr=1; yr<=lz; yr++){
+      const kasseStart  = reserve;
+      const interest    = reserve * 0.06;          // 6% auf Kassenvermögen
+      const rem         = maxReserve - reserve - interest;
+      const dotation    = Math.max(0, Math.min(annualMaxDot, rem));
+      // Dotierung: steuerlich absetzbar nur bis maxReserve erreicht
+      const inDotPhase  = kasseStart < maxReserve;
+      const stDot       = inDotPhase ? dotation * steuersatz : 0;
+      // Zinsen: über gesamte Laufzeit steuerlich absetzbar (Zinseszins bis Rentenbeginn)
+      const stZins      = interest * steuersatz;
+      const stGes       = stDot + stZins;
+      kumulSt          += stGes;
+      // loanBalanceNeu = loanBalanceAlt × 1,06 + Dotierung
+      reserve           = reserve * 1.06 + dotation;
+      rows.push({yr, label,
+        kasseStart: Math.round(kasseStart),
+        dotation:   Math.round(dotation),
+        interest:   Math.round(interest),
+        kasseEnd:   Math.round(reserve),
+        stDot:      Math.round(stDot),
+        stZins:     Math.round(stZins),
+        stGes:      Math.round(stGes),
+        kumulSt:    Math.round(kumulSt)});
+    }
+    return rows;
+  }
+
+  // Tabelle: alle MAs pro Jahr summiert (übersichtlich auch bei vielen MAs)
+  // Maximale Laufzeit ermitteln
+  const maxLzTab = useD && employees.length>0
+    ? Math.max(...employees.map(e=>e.lz))
+    : avgLz;
+
+  // Alle MA-Rows berechnen
+  let maRows = [];
+  if(useD && employees.length>0){
+    employees.forEach(e=>{
+      maRows.push(simRows(e.totalBt||e.bt, e.lz, e.rz/100,
+                          e.pay||'rente', e.rf||16, st, e.name||'MA'));
+    });
+  } else {
+    maRows.push(simRows(totalBtP, avgLz, avgRz/100, 'kapital', 16, st, 'Ø je MA'));
+  }
+
+  const thead = `<thead><tr>
+    <th style="text-align:left">Jahr</th>
+    <th>Kasse gesamt</th>
+    <th>Dotierung ges. (§4d)</th>
+    <th>Zinsen ges. (6%)</th>
+    <th>Kasse Ende ges.</th>
+    <th>Steuer Dot.</th>
+    <th>Steuer Zinsen</th>
+    <th>Steuer ges.</th>
+    <th>Steuer kumuliert</th>
+  </tr></thead>`;
+
+  let tbody=''; let sumDot=0, sumZins=0, sumSt=0, kumulGes=0;
+  const mult = useD ? 1 : ma_count;
+
+  for(let yr=1; yr<=maxLzTab; yr++){
+    let dotJ=0, intJ=0, kasseStartJ=0, kasseEndJ=0, stDotJ=0, stZinsJ=0, stGesJ=0;
+    maRows.forEach(rows=>{
+      const r = rows.find(x=>x.yr===yr);
+      if(r){
+        dotJ      += r.dotation;
+        intJ      += r.interest;
+        kasseStartJ+=r.kasseStart;
+        kasseEndJ += r.kasseEnd;
+        stDotJ    += r.stDot;
+        stZinsJ   += r.stZins;
+        stGesJ    += r.stGes;
+      }
+    });
+    // Mit MA-Anzahl multiplizieren (Pauschal-Modus)
+    dotJ*=mult; intJ*=mult; kasseStartJ*=mult; kasseEndJ*=mult;
+    stDotJ*=mult; stZinsJ*=mult; stGesJ*=mult;
+
+    if(kasseEndJ===0 && dotJ===0 && intJ===0) continue;
+    sumDot+=dotJ; sumZins+=intJ; sumSt+=stGesJ; kumulGes+=stGesJ;
+
+    tbody+=`<tr>
+      <td>J.${yr}</td>
+      <td class="r">${fe(Math.round(kasseStartJ))}</td>
+      <td class="r">${dotJ>0?'<b>'+fe(Math.round(dotJ))+'</b>':'<span style="color:var(--txm)">—</span>'}</td>
+      <td class="r">${intJ>0?fe(Math.round(intJ)):'—'}</td>
+      <td class="r hl">${fe(Math.round(kasseEndJ))}</td>
+      <td class="r pos">${stDotJ>0?fe(Math.round(stDotJ)):'—'}</td>
+      <td class="r pos">${stZinsJ>0?fe(Math.round(stZinsJ)):'—'}</td>
+      <td class="r pos">${fe(Math.round(stGesJ))}</td>
+      <td class="r pos hl">${fe(Math.round(kumulGes))}</td>
+    </tr>`;
+  }
+
+  // Summenzeile
+  tbody+=`<tr class="ph">
+    <td>Gesamt</td>
+    <td></td>
+    <td class="r">${fe(Math.round(sumDot))}</td>
+    <td class="r">${fe(Math.round(sumZins))}</td>
+    <td class="r hl"></td>
+    <td></td>
+    <td></td>
+    <td class="r pos">${fe(Math.round(sumSt))}</td>
+    <td class="r pos hl">${fe(Math.round(sumSt))}</td>
+  </tr>`;
+
+  tbl.innerHTML = thead+'<tbody>'+tbody+'</tbody>';
+}
+
+// ── NACHGELAGERTE BESTEUERUNG — § 32a EStG ──
+function calcESt(zvE){
+  // Einkommensteuer nach § 32a EStG 2025
+  if(zvE<=11604) return 0;
+  if(zvE<=17005){
+    const y=(zvE-11604)/10000;
+    return Math.round((979.18*y+1400)*y);
+  }
+  if(zvE<=66760){
+    const z=(zvE-17005)/10000;
+    return Math.round((192.59*z+2397)*z+1025);
+  }
+  if(zvE<=277825) return Math.round(0.42*zvE-10602);
+  return Math.round(0.45*zvE-18936);
+}
+
+function calcGrenzSteuersatz(zvE){
+  // Grenzsteuersatz = Steuer auf letzten Euro
+  if(zvE<=11604) return 0;
+  const delta=100;
+  return (calcESt(zvE+delta)-calcESt(zvE))/delta;
+}
+
+function calcNachgelagerterVorteil(e, zvEHeute, sonstigeRente, fuenftel){
+  // e: Mitarbeiter-Objekt
+  // zvEHeute: zu versteuerndes Jahreseinkommen heute
+  // sonstigeRente: sonstiges Renteneinkommen p.a.
+  // fuenftel: Fünftelregelung anwenden (§ 34 EStG) — nur bei Kapitalzusage relevant
+  const inflationsrate = 0.025;
+  const lz = e.lz;
+  const rd = e.rd || 20;
+
+  // Kapitalzusage und Jahresrente
+  const kapMA = fv(e.totalBt||e.bt, lz, e.rz/100);
+  const jahresRente = e.pay==='rente' ? kapMA / (e.rf||16) : 0;
+  const monatsRente = jahresRente / 12;
+
+  // Steuersatz heute
+  const stHeuteAbs  = calcESt(zvEHeute);
+  const stHeutePct  = zvEHeute>0 ? stHeuteAbs/zvEHeute : 0;
+  const grenzHoute  = calcGrenzSteuersatz(zvEHeute);
+
+  // Grundfreibetrag im Rentenalter (inflationsbereinigt)
+  const grundfreibetragHeute = 11604;
+  const grundfreibetragRente = Math.round(grundfreibetragHeute * Math.pow(1+inflationsrate, lz));
+
+  // Zu versteuerndes Einkommen im Rentenalter
+  const zvERente = Math.max(0, jahresRente + (sonstigeRente||0) - grundfreibetragRente);
+
+  // Steuersatz im Rentenalter
+  const stRenteAbs = calcESt(zvERente + grundfreibetragRente) - calcESt(grundfreibetragRente);
+  const stRentePct = zvERente>0 ? Math.max(0, stRenteAbs/(jahresRente+(sonstigeRente||0))) : 0;
+  const grenzRente = calcGrenzSteuersatz(zvERente + grundfreibetragRente);
+
+  // Steuerersparnis durch nachgelagerte Besteuerung (Rentenvariante)
+  const stAufRenteHeute = jahresRente * grenzHoute;
+  const stAufRenteRente = jahresRente * grenzRente;
+  const vorteilProJahr  = stAufRenteHeute - stAufRenteRente;
+  const vorteilGesamt   = vorteilProJahr * rd;
+
+  // Kapitalzusage: Einmalzahlung im Rentenalter
+  let kapitalVorteil=0, kapital=0, grenzRenteKap=0, fuenftelErsparnis=0, stKapRenteNormal=0, stKapRenteFuenftel=0;
+  if(e.pay==='kapital'){
+    kapital = kapMA;
+    const stKapHeute  = calcESt(zvEHeute + kapital) - calcESt(zvEHeute);
+    const zvERenteKap = (sonstigeRente||0);
+    // verbleibendes zvE im Rentenalter (ohne Kapital, mit Grundfreibetrag bereits im Tarif enthalten)
+    const vvE = zvERenteKap + grundfreibetragRente;
+
+    // OHNE Fünftelregelung: volles Kapital in einem Jahr versteuert
+    stKapRenteNormal = calcESt(vvE + kapital) - calcESt(vvE);
+
+    // MIT Fünftelregelung (§ 34 EStG):
+    // Steuer = 5 × [ESt(vvE + Kapital/5) − ESt(vvE)]
+    const estVvE        = calcESt(vvE);
+    const estVvEFuenftel = calcESt(vvE + kapital/5);
+    stKapRenteFuenftel  = (estVvEFuenftel - estVvE) * 5;
+
+    const stKapRente = fuenftel ? stKapRenteFuenftel : stKapRenteNormal;
+    fuenftelErsparnis = Math.max(0, stKapRenteNormal - stKapRenteFuenftel);
+
+    kapitalVorteil = Math.max(0, stKapHeute - stKapRente);
+    grenzRenteKap  = kapital>0 ? Math.round(stKapRente/kapital*100) : 0;
+  }
+
+  return {
+    monatsRente:   Math.round(monatsRente),
+    jahresRente:   Math.round(jahresRente),
+    kapital:       Math.round(kapMA),
+    grenzHoute:    Math.round(grenzHoute*100),
+    grenzRente:    e.pay==='rente' ? Math.round(grenzRente*100) : grenzRenteKap,
+    stHeutePct:    Math.round(stHeutePct*100),
+    stRentePct:    Math.round(stRentePct*100),
+    vorteilProJahr:Math.round(vorteilProJahr),
+    vorteilGesamt: e.pay==='rente' ? Math.round(vorteilGesamt) : Math.round(kapitalVorteil),
+    grundfreibetragRente: Math.round(grundfreibetragRente),
+    zvEHeute, sonstigeRente: sonstigeRente||0,
+    isKapital: e.pay==='kapital',
+    fuenftelAktiv: !!fuenftel,
+    fuenftelErsparnis: Math.round(fuenftelErsparnis),
+    stKapRenteNormal: Math.round(stKapRenteNormal),
+    stKapRenteFuenftel: Math.round(stKapRenteFuenftel)
+  };
+}
+
+// ── STEUERVERGLEICH NACHGELAGERTE BESTEUERUNG ──
+function toggleSteuerPanel(id){
+  const panel = document.getElementById('st-panel-'+id);
+  const arrow = document.getElementById('st-arrow-'+id);
+  const open  = panel.style.display==='none';
+  panel.style.display = open ? 'block' : 'none';
+  arrow.textContent   = open ? '▲' : '▼';
+}
+
+function updateSteuerPanel(id){
+  const zvEEl     = document.getElementById('zve-'+id);
+  const sonstEl   = document.getElementById('rente-sonst-'+id);
+  const resultEl  = document.getElementById('st-result-'+id);
+  const fuenftelEl= document.getElementById('fuenftel-'+id);
+  if(!zvEEl || !resultEl) return;
+
+  const zvE   = parseFloat(zvEEl.value)||0;
+  if(zvE<=0){ resultEl.style.display='none'; return; }
+
+  const sonst    = parseFloat(sonstEl?.value)||0;
+  const fuenftel = fuenftelEl ? fuenftelEl.checked : false;
+  const e        = employees.find(x=>x.id===id);
+  if(!e) return;
+
+  const r = calcNachgelagerterVorteil(e, zvE, sonst, fuenftel);
+  // Beide Varianten: Rente und Kapitalzusage
+  if(r.jahresRente<=0 && r.kapital<=0){
+    resultEl.innerHTML='<div style="font-size:10px;color:var(--txm)">Bitte Jahreseinkommen eingeben.</div>';
+    resultEl.style.display='block';
+    return;
+  }
+
+  resultEl.style.display='block';
+  const fuenftelInfo = r.isKapital && r.fuenftelAktiv
+    ? `<br><span style="color:#1A8C6A;font-weight:600">✓ Fünftelregelung aktiv (§ 34 EStG):</span> Steuer ohne Fünftelregelung: <b>${fe(r.stKapRenteNormal)}</b> · mit Fünftelregelung: <b>${fe(r.stKapRenteFuenftel)}</b> · zusätzliche Ersparnis: <b style="color:#1A8C6A">${fe(r.fuenftelErsparnis)}</b>`
+    : '';
+  const infoText = r.isKapital
+    ? `Kapitalzusage: <b>${fe(r.kapital)}</b> · Steuerlast heute auf Einmalbetrag: <b>${r.grenzHoute}%</b> Grenzsteuersatz · Im Rentenalter: <b>${r.grenzRente}%</b> effektiv<br>
+       Grundfreibetrag Rente (${e.lz}J. × 2,5% Inflation): <b>${fe(r.grundfreibetragRente)}</b>${fuenftelInfo}<br>
+       <i>⚠ Hinweis: Große Einmalzahlungen können die Steuerprogression im Auszahlungsjahr erhöhen. Steuerliche Beratung empfohlen.</i>`
+    : `Monatsrente: <b>${fe(r.monatsRente)}/M</b> · Vorteil/Jahr: <b>${fe(r.vorteilProJahr)}</b> · Grundfreibetrag Rente (${e.lz}J. × 2,5%): <b>${fe(r.grundfreibetragRente)}</b><br>
+       <i>Nachgelagerte Besteuerung: Heute kein Lohnsteuerabzug, im Rentenalter nur ${r.grenzRente}% statt ${r.grenzHoute}%.</i>`;
+  resultEl.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem;margin-bottom:.4rem">
+      <div style="background:#fff;border-radius:5px;padding:.4rem .5rem;border-left:3px solid #C0392B">
+        <div style="font-size:8px;color:var(--txm);text-transform:uppercase">Grenzsteuersatz heute</div>
+        <div style="font-size:14px;font-weight:700;color:#C0392B">${r.grenzHoute} %</div>
+      </div>
+      <div style="background:#fff;border-radius:5px;padding:.4rem .5rem;border-left:3px solid #1A8C6A">
+        <div style="font-size:8px;color:var(--txm);text-transform:uppercase">${r.isKapital?'Eff. Steuersatz Auszahlung':'Grenzsteuersatz Rente'}</div>
+        <div style="font-size:14px;font-weight:700;color:#1A8C6A">${r.grenzRente} %</div>
+      </div>
+      <div style="background:#fff;border-radius:5px;padding:.4rem .5rem;border-left:3px solid #E8621A">
+        <div style="font-size:8px;color:var(--txm);text-transform:uppercase">Steuerersparnis gesamt</div>
+        <div style="font-size:14px;font-weight:700;color:#E8621A">${fe(r.vorteilGesamt)}</div>
+      </div>
+    </div>
+    <div style="font-size:9px;color:var(--txm);line-height:1.6">${infoText}</div>`;
+
+  // Wert für Schritt 8 speichern
+  e._steuerVorteil = {vorteilGesamt: r.vorteilGesamt, grenzHoute: r.grenzHoute, grenzRente: r.grenzRente, zvE: zvE, sonst: sonst};
+
+  // Button-Label dauerhaft aktualisieren
+  const btnLabel = document.getElementById('st-btn-label-'+id);
+  const btn      = document.getElementById('st-btn-'+id);
+  if(btnLabel && r.vorteilGesamt>0){
+    btnLabel.innerHTML = '💡 Steuerersparnis: <b style="color:#1A8C6A">'
+      +fe(r.vorteilGesamt)+'</b>'
+      +' &nbsp;·&nbsp; heute '+r.grenzHoute+'%'
+      +' → Rente '+r.grenzRente+'%'
+      +' <span style="font-size:9px;color:var(--txm)">(zvE: '+fe(zvE)+' €/J.)</span>';
+    if(btn){
+      btn.style.borderColor='#1A8C6A';
+      btn.style.borderStyle='solid';
+      btn.style.color='var(--tx)';
+    }
+  }
+  updateSteuerVorteilS8();
+}
+
+function updateSteuerVorteilS8(){
+  const total = employees.reduce((s,e)=>s+(e._steuerVorteil?e._steuerVorteil.vorteilGesamt:0),0);
+  const el    = document.getElementById('s8-steuer-nachgelagert');
+  if(!el) return;
+  if(total>0){
+    el.style.display='block';
+    el.querySelector('.sv').textContent = fe(total);
+  } else {
+    el.style.display='none';
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// DATEN SPEICHERN / LADEN
+// ══════════════════════════════════════════════════════
+
+function saveRechner(){
+  // Alle Slider-Werte
+  const sliderIds = ['r-ma','r-bt','r-jr','r-st','r-rz','r-rk',
+    'r-an','r-agz-pct','r-st2','r-rk2','r-psv','r-einr','r-paus','r-inv',
+    'r-uk-ma','r-uk-age','r-uk-rba','r-uk-bt','r-uk-lz','r-uk-rz','r-uk-dz','r-uk-st','r-uk-rf'];
+  const sliders = {};
+  sliderIds.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) sliders[id] = el.value;
+  });
+
+  // Alle Checkbox/Select Werte
+  const checkIds = ['cost-psv-on','cost-einr-on','cost-paus-on','cost-inv-on'];
+  const checks = {};
+  checkIds.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) checks[id] = el.checked;
+  });
+
+  // Gesamtzustand
+  const state = {
+    version:    '1.0',
+    savedAt:    new Date().toISOString(),
+    currentMode, fm,
+    sliders,    checks,
+    employees:  employees.map(e=>({...e})),
+    berater:    {name:_bName, tel:_bTel, email:_bEmail, firma:_bFirma, ansprech:_bAnsprech},
+    ukVariante,
+  };
+
+  // Als JSON herunterladen
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const date = new Date().toLocaleDateString('de-DE').replace(/\./g,'-');
+  a.href     = url;
+  // Dateiname = Firmenname (aus Dialog-Feld pd-k-firma oder pd-firma)
+  const firmaEl = document.getElementById('pd-k-firma') || document.getElementById('pd-firma');
+  const firma   = (firmaEl && firmaEl.value.trim()) ? firmaEl.value.trim() : (_bFirma||'');
+  const firmaClean = firma.replace(/[^a-zA-Z0-9äöüÄÖÜß\s-]/g,'').trim().replace(/\s+/g,'-') || 'bav-rechner';
+  a.download = firmaClean+'-'+date+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+
+  // Bestätigung
+  showToast('💾 Daten gespeichert!', '#1A8C6A');
+}
+
+function loadRechner(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const state = JSON.parse(e.target.result);
+      if(!state.version) throw new Error('Ungültiges Format');
+
+      // Slider setzen
+      if(state.sliders){
+        Object.entries(state.sliders).forEach(([id,val])=>{
+          const el = document.getElementById(id);
+          if(el){ el.value=val; setRC(el); }
+        });
+        // Labels aktualisieren
+        updateSliderLabels();
+      }
+
+      // Checkboxen setzen
+      if(state.checks){
+        Object.entries(state.checks).forEach(([id,val])=>{
+          const el = document.getElementById(id);
+          if(el) el.checked = val;
+        });
+      }
+
+      // Modus setzen
+      if(state.currentMode) setMode(state.currentMode);
+      if(state.fm) setFM(state.fm);
+
+      // Mitarbeiter laden
+      if(state.employees && Array.isArray(state.employees)){
+        employees = state.employees;
+        renderEmployees();
+      }
+
+      // Berater-Daten
+      if(state.berater){
+        _bName    = state.berater.name    || '';
+        _bTel     = state.berater.tel     || '';
+        _bEmail   = state.berater.email   || '';
+        _bFirma   = state.berater.firma   || '';
+        _bAnsprech= state.berater.ansprech|| '';
+      }
+
+      // UK Variante
+      if(state.ukVariante) setUKVariante(state.ukVariante);
+
+      // Neuberechnen
+      updateAll();
+
+      showToast('📂 Daten geladen!', '#0F2544');
+    } catch(err){
+      showToast('⚠ Fehler beim Laden: '+err.message, '#C0392B');
+    }
+    // Input zurücksetzen damit dasselbe File nochmal geladen werden kann
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function updateSliderLabels(){
+  // Alle Slider-Labels aktualisieren
+  const labelMap = {
+    'r-ma':'l-ma','r-bt':'l-bt','r-jr':'l-jr','r-st':'l-st',
+    'r-rz':'l-rz','r-rk':'l-rk','r-an':'l-an','r-agz-pct':'l-agz-pct',
+    'r-uk-ma':'l-uk-ma','r-uk-age':'l-uk-age','r-uk-rba':'l-uk-rba',
+    'r-uk-bt':'l-uk-bt','r-uk-lz':'l-uk-lz','r-uk-rf':'l-uk-rf'
+  };
+  Object.entries(labelMap).forEach(([sliderId, labelId])=>{
+    const sl = document.getElementById(sliderId);
+    const lb = document.getElementById(labelId);
+    if(sl && lb) lb.textContent = sl.value;
+  });
+}
+
+function showToast(msg, color){
+  const toast = document.createElement('div');
+  toast.textContent = msg;
+  toast.style.cssText = 'position:fixed;bottom:5rem;right:1rem;z-index:9999;'
+    +'padding:.6rem 1.2rem;background:'+color+';color:#fff;border-radius:20px;'
+    +'font-size:12px;font-weight:700;box-shadow:0 2px 12px rgba(0,0,0,.3);'
+    +'animation:fadeIn .3s ease;pointer-events:none;';
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(), 2500);
+}
+
+// ══════════════════════════════════════════════════════
+// EXCEL IMPORT / EXPORT
+// ══════════════════════════════════════════════════════
+
+function downloadExcelVorlage(){
+  if(typeof XLSX === 'undefined'){
+    showToast('⚠ SheetJS wird geladen...', '#E8621A');
+    return;
+  }
+  const wb = XLSX.utils.book_new();
+
+  // Spalten-Definition
+  const headers = [
+    'Name','Alter','AG-Beitrag (€/M)','AN-Beitrag (€/M)',
+    'Rentenbeginnalter','Renditezusage AN (%)','Auszahlung (rente/kapital)',
+    'Rentenfaktor','Rentendauer (Jahre)','AG-Zuschuss (%)'
+  ];
+
+  // Beispielzeilen
+  const rows = [
+    headers,
+    ['Max Mustermann',35,250,0,67,2,'rente',16,20,0],
+    ['Anna Schmidt',42,0,300,65,2,'rente',16,20,0],
+    ['Thomas Bauer',50,500,250,67,2,'kapital',16,20,0],
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+
+  // Spaltenbreiten
+  ws['!cols'] = headers.map((_,i)=>({wch: i===0?20:i<=3?16:14}));
+
+  // Header-Zeile formatieren (fett)
+  headers.forEach((_,i)=>{
+    const cell = XLSX.utils.encode_cell({r:0,c:i});
+    if(!ws[cell]) return;
+    ws[cell].s = {font:{bold:true}, fill:{fgColor:{rgb:'0F2544'}}, font:{color:{rgb:'FFFFFF'},bold:true}};
+  });
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Mitarbeiter');
+
+  // Hinweis-Sheet
+  const hinweise = [
+    ['Hinweise zur Vorlage'],
+    [''],
+    ['Spalte','Beschreibung','Mögliche Werte'],
+    ['Name','Vollständiger Name des Mitarbeiters','Text'],
+    ['Alter','Aktuelles Alter in Jahren','18-65'],
+    ['AG-Beitrag','Monatlicher Arbeitgeberbeitrag in €','0 oder mehr'],
+    ['AN-Beitrag','Monatlicher Arbeitnehmerbeitrag (Entgeltumwandlung) in €','0 oder mehr'],
+    ['Rentenbeginnalter','Geplantes Rentenalter','55-70'],
+    ['Renditezusage AN','Garantierte Verzinsung für den AN in %','0-5'],
+    ['Auszahlung','Art der Versorgungsleistung','rente oder kapital'],
+    ['Rentenfaktor','Faktor zur Umrechnung Kapital → Rente (Standard: 16)','10-25'],
+    ['Rentendauer','Geplante Rentendauer in Jahren (Standard: 20)','5-30'],
+    ['AG-Zuschuss','Prozentualer Zuschuss des AG zum AN-Beitrag (Standard: 0, freiwillig)','0-100'],
+  ];
+  const ws2 = XLSX.utils.aoa_to_sheet(hinweise);
+  ws2['!cols'] = [{wch:20},{wch:45},{wch:25}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Hinweise');
+
+  XLSX.writeFile(wb, 'bav-rechner-vorlage.xlsx');
+  showToast('📥 Vorlage heruntergeladen!', '#1A8C6A');
+}
+
+function importExcel(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  if(typeof XLSX === 'undefined'){
+    showToast('⚠ SheetJS nicht geladen', '#C0392B');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const data = new Uint8Array(e.target.result);
+      const wb   = XLSX.read(data, {type:'array'});
+      const ws   = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+
+      if(rows.length < 2){
+        showToast('⚠ Keine Daten in der Datei', '#C0392B');
+        return;
+      }
+
+      // Header-Zeile überspringen, ab Zeile 2
+      let imported = 0, errors = 0;
+      const newEmployees = [];
+
+      for(let i=1; i<rows.length; i++){
+        const row = rows[i];
+        if(!row || !row[0]) continue; // leere Zeilen überspringen
+
+        try{
+          const name  = String(row[0]||'').trim() || 'Mitarbeiter '+(employees.length+newEmployees.length+1);
+          const age   = parseInt(row[1])||35;
+          const bt    = Math.max(0, parseFloat(row[2])||0);  // AG-Beitrag
+          const an    = Math.max(0, parseFloat(row[3])||0);  // AN-Beitrag
+          const rba   = parseInt(row[4])||67;
+          const rz    = parseFloat(row[5])||2;
+          const pay   = String(row[6]||'rente').toLowerCase().trim()==='kapital'?'kapital':'rente';
+          const rf    = parseInt(row[7])||16;
+          const rd    = parseInt(row[8])||20;
+          const agzp  = Math.max(0, parseFloat(row[9])||0);
+          const lz    = Math.max(1, rba-age);
+          const agz   = Math.round(an*agzp/100);
+          const totalBt = bt+an+agz;
+
+          newEmployees.push({
+            id: Date.now()+i,
+            name, age, bt, an, agz, agzp, totalBt,
+            rba, rz, pay, rf, rd, lz,
+            stk: 0.30
+          });
+          imported++;
+        } catch(rowErr){
+          errors++;
+        }
+      }
+
+      if(newEmployees.length > 0){
+        employees = employees.concat(newEmployees);
+        setMode('d'); // Individual-Modus aktivieren
+        renderEmployees();
+        updateAll();
+        showToast('✓ '+imported+' Mitarbeiter importiert'+(errors>0?' ('+errors+' Fehler)':''), '#1A8C6A');
+      } else {
+        showToast('⚠ Keine gültigen Zeilen gefunden', '#E8621A');
+      }
+    } catch(err){
+      showToast('⚠ Fehler beim Lesen: '+err.message, '#C0392B');
+    }
+    event.target.value = '';
+  };
+  reader.readAsArrayBuffer(file);
+}
+function resetAll(){
+  // Alle Eingaben auf Standardwerte zurücksetzen
+  ['r-ma','r-bt','r-jr','r-rz','r-rk','r-st'].forEach(id=>{
+    const el=document.getElementById(id);
+    const def={'r-ma':5,'r-bt':250,'r-jr':32,'r-rz':20,'r-rk':50,'r-st':30};
+    if(el && def[id]!==undefined){ el.value=def[id]; setRC(el); }
+  });
+  // Individual-Modus zurücksetzen
+  employees=[];
+  renderEmployees();
+  setMode('p');
+  updateAll();
+  showToast('Berechnung zurückgesetzt','#0F2544');
+}
+
+function updateAll(){
+  const st=g('r-st')/100, rk=g('r-rk')/1000;
+  const useD=currentMode==='d'&&employees.length>0;
+  const hasMA=employees.length>0;
+
+  // Individual mode with no employees: blank all results
+  if(currentMode==='d'&&employees.length===0){
+    const blank=['b-ges','b-st','b-net','b-geh','b-ges4d','b-dot4d','b-zins4d','b-dot','bf-ges','bf-st','bf-net','bf-geh','bf-dot4d','bf-zins4d','bf-dot',
+      'm-ma','m-abt','m-alz','m-gk','sp-ma','sp-uk','sp-gain','sp-gains',
+      'rk-m1','rk-m2','rk-m3','cf-m1','cf-m2','cf-m3','cf-m4',
+      'sum-grid','sum-text','i2t','i2x','i3t','i3x','i4t','i4x','i5t','i5x','i6t','i6x'];
+    blank.forEach(function(id){
+      var el=document.getElementById(id);
+      if(!el)return;
+      if(id.startsWith('bf-')){el.style.width='0%';}
+      else if(id==='sum-grid'||id==='sum-text'){el.innerHTML='';}
+      else{el.textContent='—';}
+    });
+    // Clear charts
+    if(cfChart){cfChart.destroy();cfChart=null;}
+    if(window.cfCumChart2){window.cfCumChart2.destroy();window.cfCumChart2=null;}
+    if(rdChart){rdChart.destroy();rdChart=null;}
+    // Clear table
+    var tbl=document.getElementById('cf-table');
+    if(tbl)tbl.innerHTML='<tr><td colspan="8" style="text-align:center;padding:1.5rem;color:var(--txm)">Bitte Mitarbeiter in Schritt 5 eintragen.</td></tr>';
+    var empList=document.getElementById('emp-list');
+    if(empList)empList.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--txm);font-size:13px;border:1px dashed var(--bd);border-radius:var(--rs)">Noch keine Mitarbeiter eingetragen.</div>';
+    updateModeDisplay();
+    return;
+  }
+
+  // Labels
+  document.getElementById('l-ma').textContent=g('r-ma');
+  document.getElementById('l-jr').textContent=g('r-jr')+' J.';
+  document.getElementById('l-bt').textContent=g('r-bt').toLocaleString('de-DE')+' €';
+  document.getElementById('l-st').textContent=Math.round(st*100)+' %';
+  document.getElementById('l-rz').textContent=fp(g('r-rz')/10);
+  document.getElementById('l-rk').textContent=fp(rk*100);
+
+  // AN/Kombi calculations
+  const showAN=fm==='an'||fm==='ko';
+  if(showAN){
+    const anBt=g('r-an'); const agzPct=g('r-agz-pct'); const agzBt=Math.round(anBt*agzPct/100);
+    document.getElementById('l-an').textContent=anBt.toLocaleString('de-DE')+' €';
+    document.getElementById('l-agz').textContent=agzBt.toLocaleString('de-DE')+' €';
+    // AN netto: Bruttogehaltsverzicht spart ~30% LSt + ~25% SV = ~55% effektive Last
+    const anNettoKosten=Math.round(anBt*0.45);
+    const agSVErsparnis=Math.round(anBt*0.25)*g('r-ma');
+    const ukGesamt=(g('r-bt')+anBt+agzBt)*g('r-ma');
+    document.getElementById('an-netto-kosten').textContent=anNettoKosten.toLocaleString('de-DE')+' €/M.';
+    document.getElementById('ag-sv-ersparnis').textContent=fe(agSVErsparnis*12)+'/J.';
+    document.getElementById('uk-gesamtbeitrag').textContent=(g('r-bt')+anBt+agzBt).toLocaleString('de-DE')+' €/M.';
+  }
+
+  if(pwUnlocked){
+    document.getElementById('l-psv').textContent=g('r-psv')+' ‰';
+    document.getElementById('l-einr').textContent=fp(g('r-einr'));
+    document.getElementById('l-paus').textContent=g('r-paus')+' €';
+    document.getElementById('l-inv').textContent=fp(g('r-inv'));
+  }
+
+  // Aggregate
+  let ma_count,avgLz,totalMonthly,gb,avgRz,versVolumen;
+  if(useD){
+    ma_count=employees.length;
+    avgLz=Math.round(employees.reduce((s,e)=>s+e.lz,0)/ma_count);
+    totalMonthly=employees.reduce((s,e)=>s+(e.totalBt||e.bt),0);
+    gb=employees.reduce((s,e)=>s+(e.totalBt||e.bt)*12*e.lz,0);
+    avgRz=employees.reduce((s,e)=>s+e.rz,0)/ma_count;
+    versVolumen=employees.reduce((s,e)=>s+fv(e.totalBt||e.bt,e.lz,e.rz/100),0);
+    document.getElementById('d-ma').textContent=ma_count;
+    document.getElementById('d-abt').textContent=Math.round(totalMonthly/ma_count).toLocaleString('de-DE')+' €';
+    document.getElementById('d-lz').textContent=avgLz+' J.';
+    document.getElementById('l-st2').textContent=Math.round(st*100)+' %';
+    document.getElementById('l-rk2').textContent=fp(rk*100);
+  } else {
+    ma_count=g('r-ma'); avgLz=g('r-jr');
+    // Gesamtbeitrag pro MA = AG-Beitrag + AN-Eigenanteil + AG-Zuschuss (je nach Finanzierungsmodell)
+    const anBtPauschal  = fm==='ag' ? 0 : g('r-an');
+    const agzBtPauschal = Math.round(anBtPauschal*(g('r-agz-pct')/100));
+    const btProMAPauschal = g('r-bt') + anBtPauschal + agzBtPauschal;
+    totalMonthly=btProMAPauschal*ma_count;
+    gb=totalMonthly*12*avgLz;
+    avgRz=g('r-rz')/10;
+    versVolumen=fv(btProMAPauschal,avgLz,avgRz/100)*ma_count;
+  }
+  updateModeDisplay();
+  // gehalt/netto/vorteil werden nach totalBtP und § 4d Berechnung gesetzt
+  let steuer = gb*st; // Platzhalter, wird unten überschrieben
+  const gehalt = gb * 1.2;
+  let netto  = gb - steuer;
+  let vorteil= gehalt - netto;
+
+  // Compute shared spread variables (needed by S1 and S3)
+  const anBtP=fm==='ag'?0:g('r-an');
+  const agzBtP=Math.round(anBtP*(g('r-agz-pct')/100));
+  const totalBtP=g('r-bt')+anBtP+agzBtP;
+  // § 4d Steuerberechnung — hier erst totalBtP verfügbar
+  const {steuer4d, dotierung4d=0, zinsen4d=0} = calc4dSteuer(useD, employees, avgLz, avgRz, totalBtP, ma_count, st, rk);
+  steuer  = steuer4d;
+  netto   = gb - steuer;
+  vorteil = gehalt - netto;
+  // gkReal wird nach buildCashflow gesetzt (echte Depot-Zahl, inkl. Gebühren)
+  let gkReal = useD
+    ?employees.reduce((s,e)=>s+fv(e.totalBt||e.bt,e.lz,rk),0)
+    :fv(totalBtP,avgLz,rk)*ma_count;
+
+  // S1 metrics
+  document.getElementById('m-ma').textContent=ma_count;
+  document.getElementById('m-ma-s').textContent=useD?'individuell':'Schieberegler';
+  document.getElementById('m-abt').textContent=Math.round(totalMonthly/ma_count).toLocaleString('de-DE')+' €';
+  document.getElementById('m-alz').textContent=avgLz+' J.';
+
+  // S2
+  const mx=gehalt;
+  ['ges','st','net','geh'].forEach((k,i)=>{
+    const vals=[gb,steuer,netto,gehalt];
+    document.getElementById('b-'+k).textContent=fe(vals[i]);
+    document.getElementById('bf-'+k).style.width=Math.round(vals[i]/mx*100)+'%';
+  });
+  // § 4d gestapelter Balken (Dotierung dunkel + Zinsen hell)
+  const gesamt4d = dotierung4d + zinsen4d;
+  // Kachel b-dot: zeigt Dotierung+Zinsen gesamt
+  const _bDot = document.getElementById('b-dot');
+  if(_bDot) _bDot.textContent = fe(gesamt4d);
+  // Balken-Label b-ges4d
+  const _g4d = document.getElementById('b-ges4d');
+  if(_g4d) _g4d.textContent = fe(gesamt4d);
+  // Balken bf-dot4d + bf-zins4d proportional zu mx
+  const _bfd = document.getElementById('bf-dot4d');
+  const _bfz = document.getElementById('bf-zins4d');
+  if(_bfd) _bfd.style.width = Math.round(dotierung4d/mx*100)+'%';
+  if(_bfz) _bfz.style.width = Math.round(zinsen4d/mx*100)+'%';
+
+  const vPct=Math.round(vorteil/gehalt*100);
+  document.getElementById('i2t').textContent=fe(vorteil)+' günstiger als Gehaltserhöhung ('+vPct+' %)';
+  document.getElementById('i2x').textContent='Gesamtbeiträge '+fe(gb)+' · § 4d Steuerersparnis (Dotierung+Zinsen) '+fe(steuer)+' · Netto-Aufwand '+fe(netto)+' vs. '+fe(gehalt)+' Gehaltserhöhung.';
+
+  // S3 Spread
+  const kapMA=useD?employees.reduce((s,e)=>s+fv(e.totalBt||e.bt,e.lz,e.rz/100),0):fv(totalBtP,avgLz,avgRz/100)*ma_count;
+  const kapUK=useD?employees.reduce((s,e)=>s+fv(e.totalBt||e.bt,e.lz,rk),0):fv(totalBtP,avgLz,rk)*ma_count;
+  const costs=calcCosts(gb,versVolumen,ma_count,avgLz,st);
+  document.getElementById('sp-rzl').textContent=fp(avgRz);
+  document.getElementById('sp-rkl').textContent=fp(rk*100);
+  document.getElementById('sp-ma').textContent=fe(kapMA);
+  // sp-uk, sp-gain, sp-gains: werden nach buildCashflow mit echten Depot-Wert gesetzt
+
+  // S4 Chart
+  const maxLz=useD?Math.max(...employees.map(e=>e.lz)):avgLz;
+  const steps=Math.min(maxLz,25);
+  const labs=[],dE=[],dMA=[],dAG=[];
+  for(let i=0;i<=steps;i++){
+    const j=Math.round(i*maxLz/steps);
+    labs.push('J.'+j);
+    if(useD){
+      dE.push(Math.round(employees.reduce((s,e)=>s+e.bt*12*Math.min(j,e.lz),0)));
+      dMA.push(j>0?Math.round(employees.reduce((s,e)=>s+fv(e.totalBt||e.bt,Math.min(j,e.lz),e.rz/100),0)):0);
+      dAG.push(j>0?Math.round(employees.reduce((s,e)=>s+fv(e.totalBt||e.bt,Math.min(j,e.lz),rk),0)):0);
+    } else {
+      dE.push(Math.round(g('r-bt')*12*Math.min(j,avgLz)*ma_count));
+      dMA.push(j>0?Math.round(fv(totalBtP,Math.min(j,avgLz),avgRz/100)*ma_count):0);
+      dAG.push(j>0?Math.round(fv(totalBtP,Math.min(j,avgLz),rk)*ma_count):0);
+    }
+  }
+  document.getElementById('rk-m1').textContent=fe(dMA[dMA.length-1]);
+  document.getElementById('rk-m1-sub').textContent='Ø '+fp(avgRz)+' p.a.';
+  document.getElementById('rk-m2').textContent=fe(dAG[dAG.length-1]); // wird ggf. unten überschrieben
+  // S4 spread = identisch S3: spreadReal (Depot nach Gebühren − MA-Zusage)
+  // wird nach buildCashflow gesetzt (spreadReal ist dann definiert)
+  if(rdChart)rdChart.destroy();
+  rdChart=new Chart(document.getElementById('rendChart'),{type:'line',data:{labels:labs,datasets:[
+    {label:'Eingezahlt',data:dE,borderColor:'#CBD5E0',borderDash:[4,4],borderWidth:1.5,pointRadius:0,fill:false},
+    {label:'MA-Rendite',data:dMA,borderColor:'#1A3A6E',borderWidth:2,pointRadius:0,fill:false},
+    {label:'AG-Rendite',data:dAG,borderColor:'#E8621A',borderWidth:2.5,pointRadius:0,fill:false},
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.dataset.label+': '+fe(c.raw)}}},scales:{x:{ticks:{font:{size:10},color:'#4A5E78',maxTicksLimit:8},grid:{color:'rgba(0,0,0,0.04)'}},y:{ticks:{font:{size:10},color:'#4A5E78',callback:v=>fe(v)},grid:{color:'rgba(0,0,0,0.04)'}}}}});
+
+  // S5
+  renderEmployees();
+  if(hasMA&&useD){
+    const totalRente=employees.reduce((s,e)=>s+(e.pay==='rente'?fv(e.totalBt||e.bt,e.lz,e.rz/100)/((e.rf||16)*12):0),0);
+    const totalKapital=employees.reduce((s,e)=>s+(e.pay==='kapital'?fv(e.totalBt||e.bt,e.lz,e.rz/100):0),0);
+    const hasRenteMAs=employees.some(e=>e.pay==='rente');
+    const hasKapitalMAs=employees.some(e=>e.pay==='kapital');
+    const hasANMAs=employees.some(e=>(e.an||0)>0);
+    const totalAN=employees.reduce((s,e)=>s+(e.an||0),0);
+    const anLabel=hasANMAs?' · davon AN-Eigenanteil: '+totalAN.toLocaleString('de-DE')+' €/M. (Entgeltumwandlung)':'';
+    // Zusammenfassung: Rente und/oder Kapital, je nachdem was vorhanden ist
+    let summaryParts=[];
+    if(hasRenteMAs) summaryParts.push('Gesamt-Rente: '+Math.round(totalRente).toLocaleString('de-DE')+' €/Monat');
+    if(hasKapitalMAs) summaryParts.push('Gesamt-Kapital: '+fe(totalKapital));
+    document.getElementById('i5t').textContent=ma_count+' Mitarbeiter · '+summaryParts.join(' · ');
+    document.getElementById('i5x').textContent='Gesamtbeitrag UK: '+totalMonthly.toLocaleString('de-DE')+' €/Monat'+anLabel+'. Auszahlungsart und Rentenbeginn individuell je MA eingestellt.';
+  } else {
+    document.getElementById('i5t').textContent='Mitarbeiter eintragen für individuelle Berechnung';
+    document.getElementById('i5x').textContent='Mit dem Formular oben jeden Mitarbeiter einzeln erfassen — Rentenbeginnalter, Auszahlungsart und Renditezusage individuell einstellbar.';
+  }
+
+  // S6 Cashflow
+  const cfResult = buildCashflow(useD,ma_count,avgLz,rk,avgRz,totalBtP,steuer,gb);
+  const depotNachAnspar = cfResult ? cfResult.kapitalBeiAnsparEnde : gkReal;
+  // Schritt 1: gkReal = echtes Depot aus Simulation (konsistent mit S3/S4/S6)
+  gkReal = depotNachAnspar;
+  document.getElementById('m-gk').textContent = fe(gkReal);
+  // S3: Spread = echtes Depot (AG-Rendite ggf. nach Inv-Gebühr) − MA-Zusage
+  const kapUKReal = depotNachAnspar;
+  // Kapitalüberschuss: AG-Depot − MA-Zusage (Gebühren noch nicht verrechnet)
+  // Kapitalüberschuss: AG-Depot − MA-Zusage − Nettogesamtkosten (wenn Schloss offen)
+  const spreadReal = Math.max(0, kapUKReal - kapMA - costs);
+  document.getElementById('sp-uk').textContent = fe(kapUKReal);
+  document.getElementById('sp-gain-label').textContent = 'Kapitalüberschuss (Rendite-Spread)';
+  // Individuelle MA-Leistungen Block nur im Individual-Modus mit MA sichtbar
+  const maLeistBlock = document.getElementById('ma-leist-block');
+  if(maLeistBlock){
+    maLeistBlock.style.display = (useD && employees.length>0) ? 'block' : 'none';
+    if(useD && employees.length>0) buildMaLeistung();
+  }
+  // S4: Spread-Kachel = spreadReal (identisch S3)
+  document.getElementById('rk-m3').textContent = '+' + fe(spreadReal);
+  document.getElementById('rk-m3-sub').textContent = 'Unternehmensgewinn (Depot − MA-Zusage)';
+  document.getElementById('sp-gain').textContent = '+' + fe(spreadReal);
+  document.getElementById('sp-gains').textContent = 'Faktor ' + (kapUKReal/Math.max(kapMA,1)).toFixed(2).replace('.',',') + 'x · verbleibt im Unternehmen';
+  // S4: rk-m2 = echtes Kapital nach Gebühren (überschreibt fv()-Schätzung)
+  document.getElementById('rk-m2').textContent=fe(depotNachAnspar);
+  const cfDepotArr = cfResult ? cfResult.depotArr : null;
+  // Überschreibe gkReal mit echtem Depotwert (nach Gebühren) falls Gebühren aktiv
+  if(pwUnlocked && costsActive) gkReal = depotNachAnspar;
+  // m-gk wird nach buildCashflow gesetzt
+
+  // S7/S8 Summary
+  document.getElementById('sum-grid').innerHTML=[
+    {l:'Gesamtbeiträge',v:fe(gb),d:ma_count+' MA · Ø '+avgLz+' J.'},
+    {l:'§ 4d Dotierung + Zinsen',v:fe(gesamt4d),d:'Steuerersparnis: '+fe(steuer)},
+    {l:'Kapitalüberschuss',v:'+'+fe(spreadReal),d:fp(avgRz)+' → '+fp(rk*100)},
+    {l:'Gesamtvorteil',v:fe(steuer+spreadReal),d:'Steuervorteil + Kapitalüberschuss'},
+  ].map(i=>'<div class="si"><div class="sl">'+i.l+'</div><div class="sv">'+i.v+'</div><div class="sd">'+i.d+'</div></div>').join('');
+  document.getElementById('sum-text').textContent='Basis: '+ma_count+' Mitarbeiter, Gesamtbeiträge '+fe(gb)+'. Steuerersparnis '+fe(steuer)+' (§ 4d Dot.+Zinsen) + Kapitalüberschuss '+fe(spreadReal)+' = Gesamtvorteil '+fe(steuer+spreadReal)+'.';
+}
+
+function buildCashflow(useD,ma_count,avgLz,rk,avgRz,bt_per_ma,steuer,gb){
+  const curYear=new Date().getFullYear();
+
+  // Investment-Gebühr aus internen Kosten (wenn entsperrt)
+  // Gebühr = Gesamtbeiträge × inv_pct, verrechnet über lz Monate
+  const invPct=(pwUnlocked&&costsActive&&document.getElementById('cost-inv-on')&&document.getElementById('cost-inv-on').checked)
+    ?g('r-inv')/100:0;
+
+  const empList=(useD&&employees.length>0)
+    ? employees.map(e=>({
+        lz:e.lz, rz:e.rz, rk:rk,
+        bt:e.totalBt||e.bt, pay:e.pay||'rente', rd:e.rd||20
+      }))
+    : [{
+        lz:avgLz, rz:avgRz, rk:rk,
+        bt:bt_per_ma*ma_count, pay:'rente', rd:20
+      }];
+
+  const maxYears=Math.max(...empList.map(e=>e.lz+(e.pay==='rente'?e.rd:1))); // endet mit letzter Zahlung
+  const years=[],beitraege=[],zinsen=[],spreadArr=[],renteArr=[],depotArr=[],gebArr=[];
+
+  // Per-employee depot (monthly simulation for accuracy with fees)
+  // Pre-compute monthly fee per employee:
+  // Basis = Gesamtbeitrag je MA (bt × 12 × lz)
+  // Kosten = Gesamtbeitrag × AA%
+  // Verrechnungsmonate = MIN(Laufzeit_Jahre, 35)
+  // Monatliche Fee = Kosten / Verrechnungsmonate
+  // Beispiel: 250€ × 12 × 15J × 7,5% = 3.375€ / 15 = 225€/Monat
+  const monthlyFees=empList.map(e=>{
+    if(invPct<=0) return 0;
+    const gesamtbeitrag     = e.bt * 12 * e.lz;          // Gesamtbeitrag je MA
+    const gesamtkosten      = gesamtbeitrag * invPct;     // z.B. 45.000 × 7,5% = 3.375€
+    const verrechnungsMonate = Math.min(e.lz, 35);        // max. 35 Monate
+    return gesamtkosten / verrechnungsMonate;             // z.B. 3.375 / 15 = 225€/M
+  });
+  const feeMonthsPerMA=empList.map(e=>Math.min(e.lz, 35));
+
+  // Initialize per-employee monthly depots
+  const depots=empList.map(()=>0);
+  // Track months elapsed per employee
+  const monthsElapsed=empList.map(()=>0);
+
+  for(let y=0;y<Math.min(maxYears,65);y++){
+    let b=0, z=0, spr=0, ren=0, geb=0;
+
+    empList.forEach((e,ei)=>{
+      if(y<e.lz){
+        // ── ANSPARPHASE: monthly simulation ──
+        for(let m=0;m<12;m++){
+          const mIdx=y*12+m;
+          const fee=(mIdx<feeMonthsPerMA[ei]&&invPct>0)?monthlyFees[ei]:0; // Gebühr erste MIN(lz,35) Monate
+          const netContrib=e.bt-fee;
+          const interest=depots[ei]*(e.rk/12);
+          depots[ei]=depots[ei]+interest+netContrib;
+          b+=e.bt;      // gross contribution shown
+          z+=interest;
+          geb+=fee;
+        }
+        // Spread this year = echtes Depot-Wachstum (Zinsen) minus MA-Kapitalwachstum
+        const capMA_prev=y>0?fv(e.bt,y,e.rz/100):0;
+        const capMA_cur=fv(e.bt,y+1,e.rz/100);
+        const depotZinsenDiesesJahr=depots[ei]*(1-(1/(1+e.rk/12)**12)); // Näherung Jahreszinsen
+        spr+=Math.max(0,depotZinsenDiesesJahr-(capMA_cur-capMA_prev));
+
+      } else {
+        // ── RENTENPHASE ──
+        const retY=y-e.lz;
+        const interest=depots[ei]*e.rk;
+        z+=interest;
+
+        if(e.pay==='rente'){
+          const totalMAcap=fv(e.bt,e.lz,e.rz/100);
+          const annualPension=totalMAcap/(e.rf||16);
+          if(retY<e.rd){
+            // Laufende Rentenzahlung
+            ren+=annualPension;
+            depots[ei]=depots[ei]+interest-annualPension;
+            spr+=depots[ei]*(e.rk-e.rz/100);
+          } else if(retY===e.rd){
+            // Letzte Rentenzahlung — danach kein weiteres Wachstum
+            ren+=annualPension;
+            depots[ei]=Math.max(0,depots[ei]+interest-annualPension);
+            // Depot einfrieren: verbleibendes Nettounternehmenskapital
+          } else {
+            // Nach letzter Rente: Depot wächst NICHT mehr (Verpflichtung erfüllt)
+            // depots[ei] bleibt unverändert — Nettounternehmenskapital
+          }
+        } else if(e.pay==='kapital'){
+          if(retY===0){
+            // Einmalzahlung: Kapital wird ausgezahlt
+            const totalMAcap=fv(e.bt,e.lz,e.rz/100);
+            ren+=totalMAcap;
+            depots[ei]=Math.max(0,depots[ei]-totalMAcap);
+            // Depot einfrieren — Nettounternehmenskapital
+          } else {
+            // Nach Einmalzahlung: kein weiteres Wachstum
+            // depots[ei] bleibt unverändert
+          }
+        }
+      }
+    });
+
+    const totalDepot=depots.reduce((s,d)=>s+Math.max(0,d),0);
+    years.push(curYear+y);
+    beitraege.push(Math.round(b));
+    zinsen.push(Math.round(Math.max(0,z)));
+    spreadArr.push(Math.round(Math.max(0,spr)));
+    renteArr.push(-Math.round(ren));
+    depotArr.push(Math.round(totalDepot));
+    gebArr.push(-Math.round(geb));
+  }
+
+  // Metrics
+  const maxDepot=Math.max(...depotArr);
+  const totalB=beitraege.reduce((a,b)=>a+b,0);
+  const totalR=renteArr.reduce((a,b)=>a+Math.abs(b),0);
+  const totalSpr=spreadArr.reduce((a,b)=>a+b,0);
+  const totalGeb=gebArr.reduce((a,b)=>a+Math.abs(b),0);
+  const finalDepot=depotArr[depotArr.length-1];
+
+
+  // Kapital am Ende der Ansparphase — Summe der individuellen Endwerte pro MA
+  // kapitalBeiAnsparEnde: Summe der individuellen MA-Endwerte
+  // Jeder MA wird einzeln simuliert — mit oder ohne Gebühren
+  function simDepotMA(bt, lz, rk, invPct){
+    if(lz<=0) return 0;
+    const verr        = Math.min(lz, 35);
+    const gesamtbeitrag = bt * 12 * lz;
+    const fee         = invPct>0 ? (gesamtbeitrag * invPct / verr) : 0;
+    // Basis = Gesamtbeitrag × AA% / Verrechnungsmonate
+    // z.B. 250 × 12 × 15 × 7,5% / 15 = 225€/Monat
+    const rm = rk/12;  // monatlicher Zinssatz = p.a. / 12
+    let k = 0;
+    for(let m=0; m<lz*12; m++){
+      const inv = Math.max(0, bt - (m<verr ? fee : 0));
+      k = k * (1+rm) + inv;  // erst verzinsen, dann einzahlen
+    }
+    return Math.round(k);
+  }
+
+  const kapitalBeiAnsparEnde = useD && empList.length>0
+    ? empList.reduce((s,e) => s + simDepotMA(e.bt, e.lz, e.rk, invPct), 0)
+    : simDepotMA(bt_per_ma * ma_count, avgLz, rk, invPct);
+  document.getElementById('cf-m1').textContent=fe(kapitalBeiAnsparEnde);
+  document.getElementById('cf-m2').textContent=fe(kapitalBeiAnsparEnde); // echtes Depot bei Vertragsende
+  document.getElementById('cf-m3').textContent=fe(totalR);
+  document.getElementById('cf-m4').textContent=fe(Math.max(0,finalDepot));
+
+  // Chart 1: Zuflüsse/Abflüsse
+  const hasGeb=totalGeb>0;
+  const datasets=[
+    {label:'Beitragseinzahlung',data:beitraege,
+     backgroundColor:'rgba(26,58,110,0.75)',borderRadius:2,stack:'pos'},
+    {label:'Zinsen (AG-Rendite)',data:zinsen,
+     backgroundColor:'rgba(26,58,110,0.30)',borderRadius:2,stack:'pos'},
+    {label:'Kapitalüberschuss',data:spreadArr,
+     backgroundColor:'rgba(26,140,106,0.7)',borderRadius:2,stack:'pos'},
+    {label:'Kapital-/Rentenauszahlung',data:renteArr,
+     backgroundColor:'rgba(192,57,43,0.65)',borderRadius:2,stack:'neg'},
+  ];
+  if(hasGeb){
+    datasets.push({
+      label:'Investmentgebühr (verrechnet)',data:gebArr,
+      backgroundColor:'rgba(192,57,43,0.35)',borderRadius:2,stack:'neg'
+    });
+  }
+
+  if(cfChart)cfChart.destroy();
+  cfChart=new Chart(document.getElementById('cfChart'),{
+    type:'bar',data:{labels:years,datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fe(Math.abs(ctx.raw))}}},
+      scales:{
+        x:{ticks:{font:{size:9},color:'#4A5E78',maxTicksLimit:14},grid:{display:false}},
+        y:{ticks:{font:{size:9},color:'#4A5E78',callback:v=>fe(Math.abs(v))},
+           grid:{color:'rgba(0,0,0,0.04)'}}
+      }
+    }
+  });
+
+  // Chart 2: Depot-Stand
+  const cc2=document.getElementById('cfCumChart');
+  if(cc2){
+    if(window.cfCumChart2)window.cfCumChart2.destroy();
+    const colors=depotArr.map((v,i)=>i===0||v>=depotArr[i-1]?'rgba(232,98,26,0.75)':'rgba(192,57,43,0.6)');
+    window.cfCumChart2=new Chart(cc2,{
+      type:'bar',data:{labels:years,datasets:[{
+        label:'Depot-Stand',data:depotArr,backgroundColor:colors,borderRadius:2
+      }]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:ctx=>' Depot: '+fe(ctx.raw)}}},
+        scales:{
+          x:{ticks:{font:{size:9},color:'#4A5E78',maxTicksLimit:14},grid:{display:false}},
+          y:{ticks:{font:{size:9},color:'#4A5E78',callback:v=>fe(v)},
+             grid:{color:'rgba(0,0,0,0.04)'}}
+        }
+      }
+    });
+  }
+
+  // Legend
+  const legEl=document.querySelector('.cf-legend');
+  if(legEl)legEl.innerHTML=`
+    <div class="cf-li"><div class="cf-dot" style="background:rgba(26,58,110,0.75)"></div>Beitragseinzahlung</div>
+    <div class="cf-li"><div class="cf-dot" style="background:rgba(26,58,110,0.30)"></div>Zinsen</div>
+    <div class="cf-li"><div class="cf-dot" style="background:rgba(26,140,106,0.7)"></div>Kapitalüberschuss</div>
+    ${hasGeb?'<div class="cf-li"><div class="cf-dot" style="background:rgba(192,57,43,0.35)"></div>Investmentgebühr</div>':''}
+    <div class="cf-li"><div class="cf-dot" style="background:rgba(192,57,43,0.65)"></div>Rentenauszahlung</div>`;
+
+  // Jahrestabelle
+  const tbl=document.getElementById('cf-table');
+  const gebCol=hasGeb?'<th>Inv.-Gebühr</th>':'';
+  let rows=`<thead><tr>
+    <th style="text-align:left">Jahr</th>
+    <th>Einzahlung</th>
+    <th>Zinsen</th>
+    <th>Kapitalüberschuss</th>
+    ${gebCol}
+    <th>Depot-Stand</th>
+    <th>MA-Verpflichtung</th>
+    <th>Überschuss</th>
+    <th>Kapital-/Rentenzahlung</th>
+  </tr></thead><tbody>`;
+  let ansparDone=false,renteDone=false;
+  years.forEach((yr,i)=>{
+    const hasIn=beitraege[i]>0,hasOut=renteArr[i]<0;
+    if(hasIn&&!ansparDone){rows+=`<tr class="phase-header"><td colspan="${hasGeb?9:8}">Ansparphase — Kapitalaufbau</td></tr>`;ansparDone=true;}
+    if(!hasIn&&hasOut&&!renteDone){rows+=`<tr class="phase-header"><td colspan="${hasGeb?9:8}">Rentenphase — Kapitalverwertung</td></tr>`;renteDone=true;}
+    if(!hasIn&&!hasOut&&spreadArr[i]===0&&zinsen[i]===0)return;
+    const capMA=empList.reduce((s,e)=>s+fv(e.bt,Math.min(i+1,e.lz),e.rz/100),0);
+    const ue=depotArr[i]-capMA;
+    const gebCell=hasGeb?`<td class="neg">${gebArr[i]<0?'–'+fe(Math.abs(gebArr[i])):'—'}</td>`:'';
+    rows+=`<tr>
+      <td>${yr}</td>
+      <td>${hasIn?fe(beitraege[i]):'—'}</td>
+      <td class="pos">${zinsen[i]>0?'+'+fe(zinsen[i]):'—'}</td>
+      <td class="pos">${spreadArr[i]>0?'+'+fe(spreadArr[i]):'—'}</td>
+      ${gebCell}
+      <td style="font-weight:600;color:#E8621A">${fe(depotArr[i])}</td>
+      <td>${fe(capMA)}</td>
+      <td class="${ue>=0?'pos':'neg'}">${ue>=0?'+':'-'}${fe(Math.abs(ue))}</td>
+      <td class="${hasOut?'neg':''}">${hasOut?'–'+fe(Math.abs(renteArr[i])):'—'}</td>
+    </tr>`;
+  });
+  rows+='</tbody>';
+  tbl.innerHTML=rows;
+
+  document.getElementById('i6t').textContent=
+    'Max. Depot: '+fe(maxDepot)+(hasGeb?' · Servicegebühren bereits verrechnet':'');
+  document.getElementById('i6x').textContent=
+    'Depot wächst durch Einzahlungen + Zinsen ('+fp(rk*100)+'% p.a.). '
+    +(hasGeb?'Servicegebühren sind in der Kapitalentwicklung bereits berücksichtigt. ':'')
+    +'Kapitalüberschuss = AG-Rendite über MA-Zusage hinaus.';
+  return {kapitalBeiAnsparEnde, depotArr, gebArr};
+}
+
+function openBeraterDialog(){
+  // Prefill with saved values
+  ['pd-berater-name','pd-berater-tel','pd-berater-email','pd-firma','pd-ansprechpartner'].forEach(id=>{
+    const saved=localStorage.getItem(id);
+    if(saved) document.getElementById(id).value=saved;
+  });
+  document.getElementById('dlg-berater').style.display='flex';
+}
+// Globale Berater-Variablen (sicher, unabhängig vom Dialog-DOM-Zustand)
+let _bName='', _bTel='', _bEmail='', _bFirma='', _bAnsprech='';
+
+function startPrint(){
+  _bName   = document.getElementById('pd-berater-name').value  || 'Ihr Berater';
+  _bTel    = document.getElementById('pd-berater-tel').value   || '0341-590840';
+  _bEmail  = document.getElementById('pd-berater-email').value || 'info@bankshop.de';
+  _bFirma  = document.getElementById('pd-firma').value         || 'Ihr Unternehmen';
+  _bAnsprech = document.getElementById('pd-ansprechpartner').value || 'Geschäftsführung';
+  // Für nächste Sitzung merken
+  try{
+    localStorage.setItem('pd-berater-name', _bName);
+    localStorage.setItem('pd-berater-tel',  _bTel);
+    localStorage.setItem('pd-berater-email',_bEmail);
+    localStorage.setItem('pd-firma',        _bFirma);
+    localStorage.setItem('pd-ansprechpartner', _bAnsprech);
+  }catch(e){}
+  document.getElementById('dlg-berater').style.display='none';
+  prepPrint();
+}
+function prepPrint(){
+  // Dotierungselemente vor dem Druck ausblenden
+  ['steuer-tab-wrap','dotierung-hinweis','btn-steuer-tab','uk-modul'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.setProperty('display','none','important');
+  });
+  document.querySelectorAll('.edot').forEach(el=>el.style.setProperty('display','none','important'));
+  const dateStr=new Date().toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const useD=currentMode==='d'&&employees.length>0;
+  const rk=g('r-rk')/1000;
+  const avgRz=useD?employees.reduce((s,e)=>s+e.rz,0)/employees.length:g('r-rz')/10;
+  const ma_count=useD?employees.length:g('r-ma');
+  const avgLz=useD?Math.round(employees.reduce((s,e)=>s+e.lz,0)/employees.length):g('r-jr');
+  const st=g('r-st')/100;
+
+  // Berater-Daten aus globalen Variablen (sicher nach Dialog-Close)
+  const bName   = _bName   || 'Ihr Berater';
+  const bTel    = _bTel    || '0341-590840';
+  const bEmail  = _bEmail  || 'info@bankshop.de';
+  const firma   = _bFirma  || 'Ihr Unternehmen';
+  const ansprech= _bAnsprech || 'Geschäftsführung';
+
+  const n=(v)=>typeof v==='number'?v.toLocaleString('de-DE',{minimumFractionDigits:0,maximumFractionDigits:0})+'\u202f\u20ac':v;
+  const pct=(v)=>v.toFixed(1).replace('.',',')+'\u202f%';
+  const val=(id)=>{const el=document.getElementById(id);return el?el.textContent:'\u2014';};
+  const fmLabels={'ag':'Arbeitgeberfinanziert','an':'Entgeltumwandlung (AN)','ko':'Kombi-Modell (AG+AN)'};
+
+  let html='';
+
+  // ══════════════════════════════════════════════════════
+  // SEITE 1: Deckblatt + Kennzahlen + Vorteile
+  // ══════════════════════════════════════════════════════
+  html+=`<div class="ps-page">
+  <div class="ps-hd">
+    <div>
+      <div class="ps-hd-logo">CEB <span>Bankshop AG</span><span class="ps-hd-claim"> &ndash; Vermittlung von Bankdienstleistungen</span></div>
+      <div class="ps-hd-sub">Betriebliche Altersversorgung · Unterstützungskasse · pauschal dotiert</div>
+    </div>
+    <div class="ps-hd-meta" style="text-align:right">
+      <strong style="color:#0F2544">${dateStr}</strong><br>
+      ${bName}<br>
+      <span style="color:#E8621A">${bTel}</span> · ${bEmail}
+    </div>
+  </div>
+
+  <div class="ps-banner">
+    <div class="ps-banner-text">
+      <div class="ps-banner-badge">Vertrauliche Hochrechnung</div>
+      <h1 style="font-size:16px;margin:.15rem 0 .2rem">Betriebliche Alters&shy;versorgung</h1>
+      <p>Pauschal dotierte Unterstützungskasse<br>für <strong>${firma}</strong> · z. Hd. ${ansprech}</p>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.5rem">
+      <div style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:.75rem 1rem;text-align:right">
+        <div style="font-size:9px;color:#fff;text-transform:uppercase;letter-spacing:.08em">Mitarbeiter</div>
+        <div style="font-size:22px;font-weight:700;color:#fff">${ma_count}</div>
+      </div>
+      <div style="background:rgba(232,98,26,0.2);border:1px solid rgba(232,98,26,0.4);border-radius:10px;padding:.75rem 1rem;text-align:right">
+        <div style="font-size:9px;color:#fff;text-transform:uppercase;letter-spacing:.08em">Laufzeit Ø</div>
+        <div style="font-size:22px;font-weight:700;color:#fff">${avgLz} J.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Einleitung -->
+  <div style="background:linear-gradient(135deg,#F4F6FA,#EDF0F7);border-left:4px solid #E8621A;border-radius:0 10px 10px 0;padding:.875rem 1.1rem;margin-bottom:.5rem">
+    <div style="font-size:11px;font-weight:700;color:#0F2544;font-family:'Syne',sans-serif;margin-bottom:.2rem">Mehr Kapital, weniger Steuern für Ihr Unternehmen</div>
+    <div style="font-size:9px;font-weight:600;color:#E8621A;margin-bottom:.2rem">Steuern sparen, Liquidität stärken und Mitarbeiter langfristig binden.</div>
+    <div style="font-size:8px;color:#0F2544;line-height:1.5">Mit einer intelligenten Versorgungslösung über die Unterstützungskasse schaffen Sie einen echten Mehrwert für Ihr Unternehmen und Ihre Belegschaft. Nutzen Sie steuerliche Gestaltungsmöglichkeiten, stärken Sie Ihre Arbeitgeberattraktivität und schaffen Sie nachhaltige Anreize zur Mitarbeiterbindung. Die nachfolgende Ausarbeitung zeigt Ihnen das Potenzial und die Vorteile für Ihr Unternehmen auf einen Blick.</div>
+  </div>
+
+  <!-- KPI-Zeile -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:.5rem">
+    ${[
+      ['Gesamtbeiträge AG','b-ges','#0F2544'],
+      ['Steuerersparnis','b-st','#C0392B'],
+      ['Kapitalüberschuss','sp-gain','#1A7A50'],
+      ['Netto-Aufwand AG','b-net','#0F2544'],
+    ].map(([l,id,col])=>`<div style="background:#F4F6FA;border-radius:10px;padding:.75rem .875rem;border-top:3px solid ${col}">
+      <div style="font-size:9px;color:#0F2544;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem">${l}</div>
+      <div style="font-size:16px;font-weight:700;color:${col};font-family:'Syne',sans-serif">${val(id)}</div>
+    </div>`).join('')}
+  </div>
+
+  <!-- 2-Spalten: Parameter + MA-Zusammenfassung -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.5rem">
+    <div style="background:#F4F6FA;border-radius:10px;padding:.875rem">
+      <div style="font-size:10px;font-weight:700;color:#0F2544;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem">Modellparameter</div>
+      <table style="width:100%;border-collapse:collapse;font-size:10px">
+        ${[
+          ['Finanzierungsmodell', fmLabels[fm]||'AG-finanziert'],
+          ['Anzahl Mitarbeiter', ma_count+' Personen'],
+          ['Ø Monatsbeitrag', val('m-abt')],
+          ['Ø Laufzeit', avgLz+' Jahre'],
+          ['Grenzsteuersatz', pct(st*100)],
+          ['Zugesagte Rendite (MA)', pct(avgRz)],
+          ['Depotrendite (AG)', pct(rk*100)],
+        ].map(([k,v])=>`<tr><td style="padding:3px 0;color:#0F2544;font-weight:400;width:55%">${k}</td><td style="padding:3px 0;font-weight:600;color:#0F2544;text-align:right">${v}</td></tr>`).join('')}
+      </table>
+    </div>
+    <div style="background:#0F2544;border-radius:10px;padding:.875rem;color:#fff">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;color:#fff">Kapitalentwicklung</div>
+      <table style="width:100%;border-collapse:collapse;font-size:10px">
+        ${[
+          ['MA-Kapital (Zusage)', val('sp-ma'), '#fff'],
+          ['Depotrendite', val('sp-uk'), '#fff'],
+          ['Kapitalüberschuss', val('sp-gain'), '#fff'],
+          ['Netto-Aufwand', val('b-net'), '#fff'],
+          ['Steuerersparnis', val('b-st'), '#fff'],
+        ].map(([k,v,col])=>`<tr><td style="padding:3px 0;color:#fff;width:55%">${k}</td><td style="padding:3px 0;font-weight:700;color:${col};text-align:right">${v}</td></tr>`).join('')}
+      </table>
+    </div>
+  </div>
+
+  <!-- Vorteile kompakt -->
+  <div style="margin-bottom:.5rem">
+    <div style="font-size:10px;font-weight:700;color:#0F2544;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Warum Unterstützungskasse?</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem">
+      ${[
+        ['Kein Beitragslimit','Keine gesetzliche Obergrenze — ideal für GGF und leitende Angestellte'],
+        ['Vollständig steuerabzugsfähig','Alle Zuwendungen mindern als Betriebsausgabe die Steuerlast'],
+        ['Liquidität bleibt im Unternehmen','Das Kassenvermögen wird als Darlehen zurückgewährt'],
+        ['Rendite-Spread als Unternehmensgewinn','Die Differenz zwischen AG-Rendite und MA-Zusage verbleibt beim Unternehmen'],
+        ['PSV-gesichert','Alle Ansprüche sind über den PSVaG insolvenzgesichert'],
+        ['Mitarbeiterbindung','Attraktives Instrument zur Gewinnung & Bindung von Fachkräften'],
+      ].map(([t,txt])=>`<div style="background:#F4F6FA;border-radius:7px;padding:.5rem .6rem;display:flex;gap:.4rem;align-items:flex-start">
+        <div style="width:4px;min-width:4px;height:100%;background:#E8621A;border-radius:2px;margin-top:.1rem"></div>
+        <div><div style="font-size:9px;font-weight:700;color:#0F2544">${t}</div><div style="font-size:8.5px;color:#0F2544;margin-top:.1rem">${txt}</div></div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="ps-ft">
+    <span>CEB Bankshop AG · Stallbaumstraße 11 · 04155 Leipzig</span>
+    <span style="color:#E8621A">${bTel} · ${bEmail}</span>
+    <span>Seite 1 von 2</span>
+  </div>
+</div>`;
+
+  // ══════════════════════════════════════════════════════
+  // SEITE 2: Mitarbeiter-Tabelle + Jahreshochrechnung (komprimiert)
+  // ══════════════════════════════════════════════════════
+  html+=`<div class="ps-page-auto">
+  <div class="ps-hd">
+    <div>
+      <div class="ps-hd-logo">CEB <span>Bankshop AG</span><span class="ps-hd-claim"> &ndash; Vermittlung von Bankdienstleistungen</span> <span style="font-size:10px;font-weight:400;color:#0F2544">· bAV-Hochrechnung für ${firma}</span></div>
+    </div>
+    <div class="ps-hd-meta">${dateStr} · Seite 2 von 2</div>
+  </div>`;
+
+  // MA-Tabelle (Individualmodus)
+  if(useD&&employees.length>0){
+    html+=`<div style="font-size:10px;font-weight:700;color:#0F2544;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Versorgungsübersicht je Mitarbeiter</div>
+    <table class="ps-table" style="margin-bottom:1rem">
+      <thead><tr>
+        <th style="text-align:left">Mitarbeiter</th>
+        <th>Alter</th>
+        <th>Beitrag/M.</th>
+        <th>Laufzeit</th>
+        <th>Rendite MA</th>
+        <th>Rentenbeginn</th>
+        <th class="r">Kapitalzusage</th>
+        <th class="r">Versorgungsleistung</th>
+      </tr></thead>
+      <tbody>`;
+    employees.forEach(e=>{
+      const tb=e.totalBt||e.bt;
+      const k=fv(tb,e.lz,e.rz/100);
+      const vers=e.pay==='rente'
+        ?Math.round(k/((e.rf||16)*12)).toLocaleString('de-DE')+'\u202f\u20ac/Monat ('+(e.rf||16)+'\u202fJ.)'
+        :k.toLocaleString('de-DE',{maximumFractionDigits:0})+'\u202f\u20ac Kapital';
+      const anInfo=e.an>0?` <small style="color:#1A8C6A">(AG ${e.bt}\u202f\u20ac + AN ${e.an}\u202f\u20ac)</small>`:'';
+      html+=`<tr>
+        <td style="font-weight:600">${e.name}${anInfo}</td>
+        <td style="text-align:center">${e.age}</td>
+        <td style="text-align:right">${tb.toLocaleString('de-DE')}\u202f\u20ac</td>
+        <td style="text-align:center">${e.lz}\u202fJ.</td>
+        <td style="text-align:center">${pct(e.rz)}</td>
+        <td style="text-align:center">ab ${e.rba||67}</td>
+        <td class="r hl">${n(k)}</td>
+        <td class="r pos">${vers}</td>
+      </tr>`;
+    });
+    html+=`</tbody></table>`;
+  }
+
+  // Jahreshochrechnung (komprimiert — nur Ansparphase)
+  // Seitenumbruch vor Jahrestabelle wenn MA-Tabelle vorhanden
+  if(useD&&employees.length>0){
+    html+=`<div style="page-break-before:always;break-before:page;padding-top:.5rem"></div>`;
+  }
+  html+=`<div style="font-size:10px;font-weight:700;color:#0F2544;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Jahreshochrechnung — Kapitalaufbau</div>`;
+
+  const cfData=cfChart?cfChart.data:null;
+  if(cfData){
+    const labels=cfData.labels||[];
+    const ds=cfData.datasets||[];
+    const getDs=(lbl)=>{const d=ds.find(x=>x.label===lbl);return d?d.data:labels.map(()=>0);};
+    const bArr=getDs('Beitragseinzahlung');
+    const zArr=getDs('Zinsen (AG-Rendite)');
+    const sArr=getDs('Kapitalüberschuss');
+    const rArr=getDs('Kapital-/Rentenauszahlung');
+    const depotData=window.cfCumChart2?window.cfCumChart2.data.datasets[0].data:labels.map(()=>0);
+
+    const empL=useD&&employees.length>0
+      ?employees.map(e=>({bt:e.totalBt||e.bt,lz:e.lz,rz:e.rz/100}))
+      :[{bt:(g('r-bt'))*g('r-ma'),lz:g('r-jr'),rz:g('r-rz')/1000}];
+
+    html+=`<table class="ps-table">
+      <thead><tr>
+        <th style="text-align:left;width:50px">Jahr</th>
+        <th>Einzahlung</th>
+        <th>Zinsen</th>
+        <th>Kapitalüberschuss</th>
+        <th>Depot-Stand</th>
+        <th>MA-Verpflichtung</th>
+        <th>Überschuss</th>
+        <th>Kapital-/Rentenzahlung</th>
+      </tr></thead><tbody>`;
+
+    let ansparDone=false,renteDone=false;
+    labels.forEach((yr,i)=>{
+      const b=bArr[i]||0,z=zArr[i]||0,s=sArr[i]||0,r=rArr[i]||0;
+      const depot=depotData[i]||0;
+      const hasIn=b>0,hasOut=r<0;
+      if(!hasIn&&!hasOut&&s===0&&z===0)return;
+      if(hasIn&&!ansparDone){
+        html+=`<tr class="ph" style="page-break-after:avoid"><td colspan="8">Ansparphase — Kapitalaufbau</td></tr>`;
+        ansparDone=true;
+      }
+      if(!hasIn&&hasOut&&!renteDone){
+        html+=`<tr class="ph" style="page-break-after:avoid"><td colspan="8">Rentenphase — Kapitalverwertung</td></tr>`;
+        renteDone=true;
+      }
+      const capMA=empL.reduce((sum,e)=>sum+fv(e.bt,Math.min(i+1,e.lz),e.rz/100),0);
+      const ue=depot-capMA;
+      html+=`<tr>
+        <td>${yr}</td>
+        <td>${hasIn?n(b):'—'}</td>
+        <td class="pos">${z>0?n(z):'—'}</td>
+        <td class="pos">${s>0?n(s):'—'}</td>
+        <td class="hl">${n(depot)}</td>
+        <td>${n(capMA)}</td>
+        <td class="${ue>=0?'pos':'neg'}">${n(Math.abs(ue))}</td>
+        <td class="${hasOut?'neg':''}"">${hasOut?n(Math.abs(r)):'—'}</td>
+      </tr>`;
+    });
+    html+=`</tbody></table>`;
+  }
+
+  // Disclaimer + Kontakt
+  html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.875rem;page-break-inside:avoid">
+    <div style="background:#FFF8F5;border:1px solid #F5D5C0;border-radius:8px;padding:.75rem">
+      <div style="font-size:9px;font-weight:700;color:#C0392B;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem">⚠ Rechtlicher Hinweis</div>
+      <div style="font-size:8px;color:#0F2544;line-height:1.65">
+        <strong style="color:#C0392B">Wichtiger Hinweis: Diese Berechnung dient ausschließlich zur Veranschaulichung und stellt weder eine steuerliche noch eine rechtliche Beratung dar.</strong> Die CEB Bankshop AG ist als Finanzdienstleistungsvermittler tätig und erbringt keine Rechts- oder Steuerberatungsleistungen. Die gezeigten Berechnungen sind Näherungswerte auf Basis der zum Erstellungszeitpunkt geltenden gesetzlichen Rahmenbedingungen. Für verbindliche Auskünfte wenden Sie sich bitte an einen zugelassenen Steuer- oder Rechtsberater. Aus dieser Berechnung lassen sich keine Rechtsansprüche ableiten. Jahresgebühren nach Tarif B125 (dem zuständigen Fachdienstleister). PSV-Satz ist ein Schätzwert.
+      </div>
+    </div>
+    <div style="background:#0F2544;border-radius:8px;padding:.75rem;color:#fff">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,0.85);margin-bottom:.4rem">Ihr Ansprechpartner</div>
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.2rem">${bName}</div>
+      <div style="font-size:9px;color:#fff;margin-bottom:.15rem">CEB Bankshop AG · Stallbaumstraße 11 · 04155 Leipzig</div>
+      <div style="font-size:10px;color:#fff;font-weight:600;margin-bottom:.15rem">${bTel}</div>
+      <div style="font-size:9px;color:#fff">${bEmail} · www.bankshop.de</div>
+      <div style="margin-top:.6rem;padding-top:.6rem;border-top:1px solid rgba(255,255,255,0.15)">
+        <div style="font-size:8px;color:rgba(255,255,255,0.85)">Nächste Schritte</div>
+        <div style="font-size:8.5px;color:#fff;line-height:1.7;margin-top:.2rem">1. Kostenlose Erstanalyse<br>2. Individuelle Hochrechnung (dem Fachdienstleister)<br>3. Einrichtung & laufende Betreuung</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ps-ft" style="margin-top:.75rem">
+    <span>CEB Bankshop AG &ndash; Vermittlung von Bankdienstleistungen · Stallbaumstraße 11 · 04155 Leipzig · www.bankshop.de</span>
+    <span style="color:#0F2544">Vertraulich · Nur für ${firma}</span>
+    <span>Seite 2 von 2</span>
+  </div>
+</div>`;
+
+  document.getElementById('ps-root').innerHTML=html;
+  setTimeout(()=>window.print(),300);
+}
+
+// Init
+updateAll();
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis');});},{threshold:0.06});
+document.querySelectorAll('.fu').forEach(el=>obs.observe(el));
+const sids=['s1','s2','s3','s4','s6','s7','s8'];
+const nobs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.ni').forEach(n=>n.classList.remove('act'));const a=document.querySelector('.ni[data-s="'+e.target.id+'"]');if(a)a.classList.add('act');}});},{threshold:0.25});
+sids.forEach(id=>{const el=document.getElementById(id);if(el)nobs.observe(el);});
+
+
+// ══════════════════════════════════════════════════════
+// § 4d EStG UNTERSTÜTZUNGSKASSEN-MODUL
+// ══════════════════════════════════════════════════════
+
+let ukVariante = 'kapital'; // 'kapital' oder 'rente'
+
+function setUKVariante(v){
+  ukVariante = v;
+  document.getElementById('uk-btn-kapital').style.opacity = v==='kapital'?'1':'0.5';
+  document.getElementById('uk-btn-rente').style.opacity   = v==='rente'  ?'1':'0.5';
+  document.getElementById('uk-rf-wrap').style.display = v==='rente'?'block':'none';
+  calcUK();
+}
+
+function updateUKLabel(id, val, suffix){
+  document.getElementById('l-'+id).textContent = val + suffix;
+  const slider = document.getElementById('r-'+id);
+  if(slider) setRC(slider);
+}
+
+function calcUK(){
+  // ── Eingaben lesen ──
+  const employeeCount       = parseInt(document.getElementById('r-uk-ma').value)||1;
+  const currentAge          = parseInt(document.getElementById('r-uk-age').value)||35;
+  const retirementAge       = parseInt(document.getElementById('r-uk-rba').value)||67;
+  const monthlyContribution = parseFloat(document.getElementById('r-uk-bt').value)||250;
+  const paymentTermYears    = parseInt(document.getElementById('r-uk-lz').value)||32;
+  const employeeInterestRate= (parseFloat(document.getElementById('r-uk-rz').value)||20)/1000; // slider*10 = Promille
+  const loanInterestRate    = (parseFloat(document.getElementById('r-uk-dz').value)||60)/1000;
+  const corporateTaxRate    = (parseFloat(document.getElementById('r-uk-st').value)||30)/100;
+  const pensionFactor       = parseFloat(document.getElementById('r-uk-rf').value)||16;
+
+  // ── Basisberechnungen ──
+  const annualContribution  = monthlyContribution * 12;
+  const contributionYears   = Math.min(paymentTermYears, retirementAge - currentAge);
+  const totalYears          = retirementAge - currentAge;
+
+  // Kapital je Mitarbeiter bei Rentenbeginn
+  let futureValuePerEmployee;
+  if(employeeInterestRate === 0){
+    futureValuePerEmployee = annualContribution * contributionYears;
+  } else {
+    futureValuePerEmployee = annualContribution *
+      ((Math.pow(1 + employeeInterestRate, contributionYears) - 1) / employeeInterestRate);
+  }
+  const totalFutureValue = futureValuePerEmployee * employeeCount;
+
+  // ── Varianten-Parameter ──
+  let maxReserve, annualMaxDotation, annualPensionPerEmployee, totalAnnualPension;
+
+  if(ukVariante === 'rente'){
+    annualPensionPerEmployee = futureValuePerEmployee / pensionFactor;
+    totalAnnualPension       = annualPensionPerEmployee * employeeCount;
+    maxReserve               = totalAnnualPension * 2;
+    annualMaxDotation        = totalAnnualPension * 0.25;
+  } else {
+    const capitalPromise  = totalFutureValue;
+    maxReserve            = capitalPromise * 0.20;
+    annualMaxDotation     = capitalPromise * 0.025;
+  }
+
+  // ── Jahrestabelle ──
+  const rows = [];
+  let reserveStart       = 0;
+  let kumulSteuer        = 0;
+  let sumDotation        = 0;
+  let sumZinsen          = 0;
+  let sumSteuer          = 0;
+  let dotationEndYear    = null;
+
+  for(let yr = 1; yr <= totalYears; yr++){
+    const age = currentAge + yr;
+    const interestToUK = reserveStart * loanInterestRate;
+    const remainingCap = maxReserve - reserveStart - interestToUK;
+    const dotation     = Math.max(0, Math.min(annualMaxDotation, remainingCap));
+    const reserveEnd   = reserveStart + dotation + interestToUK;
+
+    const taxSavingDotation = dotation     * corporateTaxRate;
+    const taxSavingInterest = interestToUK * corporateTaxRate;
+    const totalTaxSaving    = taxSavingDotation + taxSavingInterest;
+
+    kumulSteuer += totalTaxSaving;
+    sumDotation += dotation;
+    sumZinsen   += interestToUK;
+    sumSteuer   += totalTaxSaving;
+
+    if(dotation > 0) dotationEndYear = yr;
+
+    rows.push({
+      year: yr, age,
+      reserveStart: Math.round(reserveStart),
+      dotation:     Math.round(dotation),
+      interestToUK: Math.round(interestToUK),
+      reserveEnd:   Math.round(reserveEnd),
+      taxSavingDotation: Math.round(taxSavingDotation),
+      taxSavingInterest: Math.round(taxSavingInterest),
+      totalTaxSaving:    Math.round(totalTaxSaving),
+      kumulSteuer:       Math.round(kumulSteuer),
+      loanToCompany:     Math.round(reserveEnd)
+    });
+
+    reserveStart = reserveEnd;
+  }
+
+  // ── KPI Kacheln ──
+  const kpiData = [
+    ['Versorgungskapital/MA', fe(Math.round(futureValuePerEmployee)), '#0F2544'],
+    ['Versorgungskapital ges.', fe(Math.round(totalFutureValue)), '#0F2544'],
+    ...(ukVariante==='rente'?[
+      ['Monatsrente/MA', fe(Math.round(annualPensionPerEmployee/12))+'/M', '#E8621A'],
+      ['Jahresrente ges.', fe(Math.round(totalAnnualPension)), '#E8621A'],
+    ]:[]),
+    ['Max. Dotierung/Jahr', fe(Math.round(annualMaxDotation)), '#1A8C6A'],
+    ['Max. Kassenvermögen', fe(Math.round(maxReserve)), '#1A8C6A'],
+    ['Dotierung endet Jahr', dotationEndYear ? 'Jahr '+dotationEndYear : '—', '#3D5070'],
+    ['Summe Dotierungen', fe(Math.round(sumDotation)), '#0F2544'],
+    ['Summe Zinsen', fe(Math.round(sumZinsen)), '#0F2544'],
+    ['Steuerersparnis ges.', fe(Math.round(sumSteuer)), '#E8621A'],
+  ];
+
+  document.getElementById('uk-kpis').innerHTML = kpiData.map(([l,v,col])=>
+    `<div style="background:var(--white);border:1px solid var(--bd);border-radius:var(--r);padding:.875rem;border-top:3px solid ${col}">
+      <div style="font-size:9px;color:var(--txm);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem">${l}</div>
+      <div style="font-size:15px;font-weight:700;color:${col};font-family:'Syne',sans-serif">${v}</div>
+    </div>`
+  ).join('');
+
+  // ── Jahrestabelle füllen ──
+  const tbl = document.getElementById('uk-table');
+  const thead = `<thead><tr>
+    <th style="text-align:left">Jahr</th>
+    <th>Alter</th>
+    <th>Kasse Anfang</th>
+    <th>Dotierung*</th>
+    <th>Zinsen (${fp(loanInterestRate*100)})</th>
+    <th>Kasse Ende</th>
+    <th>Steuer Dot.</th>
+    <th>Steuer Zinsen</th>
+    <th>Steuer ges.</th>
+    <th>Steuer kumuliert</th>
+    <th>Darlehen</th>
+  </tr></thead>`;
+
+  const tbody = rows.map(r => {
+    const dotCol = r.dotation > 0
+      ? `<span style="color:#0F2544;font-weight:600">${fe(r.dotation)}</span>`
+      : `<span style="color:var(--txm)">—</span>`;
+    return `<tr>
+      <td>J.${r.year}</td>
+      <td style="text-align:center">${r.age}</td>
+      <td class="r">${fe(r.reserveStart)}</td>
+      <td class="r">${dotCol}</td>
+      <td class="r">${r.interestToUK>0?fe(r.interestToUK):'—'}</td>
+      <td class="r hl">${fe(r.reserveEnd)}</td>
+      <td class="r pos">${r.taxSavingDotation>0?fe(r.taxSavingDotation):'—'}</td>
+      <td class="r pos">${r.taxSavingInterest>0?fe(r.taxSavingInterest):'—'}</td>
+      <td class="r pos">${fe(r.totalTaxSaving)}</td>
+      <td class="r pos hl">${fe(r.kumulSteuer)}</td>
+      <td class="r">${fe(r.loanToCompany)}</td>
+    </tr>`;
+  }).join('');
+
+  // Summenzeile
+  const tfoot = `<tfoot><tr class="ph">
+    <td colspan="3">Gesamt</td>
+    <td class="r">${fe(Math.round(sumDotation))}</td>
+    <td class="r">${fe(Math.round(sumZinsen))}</td>
+    <td class="r hl">${fe(Math.round(reserveStart))}</td>
+    <td class="r pos">${fe(Math.round(rows.reduce((s,r)=>s+r.taxSavingDotation,0)))}</td>
+    <td class="r pos">${fe(Math.round(rows.reduce((s,r)=>s+r.taxSavingInterest,0)))}</td>
+    <td class="r pos">${fe(Math.round(sumSteuer))}</td>
+    <td class="r pos hl">${fe(Math.round(sumSteuer))}</td>
+    <td class="r">${fe(Math.round(reserveStart))}</td>
+  </tr></tfoot>`;
+
+  tbl.innerHTML = thead + '<tbody>' + tbody + '</tbody>' + tfoot;
+  document.getElementById('uk-results').style.display = 'block';
+
+  // Slider Farben
+  ['uk-ma','uk-age','uk-rba','uk-bt','uk-lz','uk-rz','uk-dz','uk-st','uk-rf'].forEach(id=>{
+    const el = document.getElementById('r-'+id);
+    if(el) setRC(el);
+  });
+}
+
+// Initial berechnen
+setTimeout(()=>{ setUKVariante('kapital'); calcUK(); }, 100);
+</script>
+
+<!-- BERATER-DIALOG -->
+<div id="dlg-berater" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(15,37,68,0.7);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:2rem;max-width:480px;width:90%;box-shadow:0 24px 80px rgba(15,37,68,0.35)">
+    <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#0F2544;margin-bottom:.25rem">Angebot erstellen</div>
+    <div style="font-size:12px;color:#3D5070;margin-bottom:1.5rem">Berater- & Empfängerdaten für das PDF-Angebot</div>
+    <div style="display:grid;gap:.75rem">
+      <div>
+        <label style="font-size:11px;font-weight:600;color:#0F2544;text-transform:uppercase;letter-spacing:.05em">Ihr Name (Berater)</label>
+        <input id="pd-berater-name" placeholder="Max Mustermann" style="width:100%;margin-top:.25rem;padding:.6rem .75rem;border:1.5px solid #D1D9E6;border-radius:8px;font-size:13px;color:#0F2544;outline:none;box-sizing:border-box">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div>
+          <label style="font-size:11px;font-weight:600;color:#0F2544;text-transform:uppercase;letter-spacing:.05em">Telefon</label>
+          <input id="pd-berater-tel" placeholder="0341-590840" style="width:100%;margin-top:.25rem;padding:.6rem .75rem;border:1.5px solid #D1D9E6;border-radius:8px;font-size:13px;color:#0F2544;outline:none;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:600;color:#0F2544;text-transform:uppercase;letter-spacing:.05em">E-Mail</label>
+          <input id="pd-berater-email" placeholder="info@bankshop.de" style="width:100%;margin-top:.25rem;padding:.6rem .75rem;border:1.5px solid #D1D9E6;border-radius:8px;font-size:13px;color:#0F2544;outline:none;box-sizing:border-box">
+        </div>
+      </div>
+      <div style="border-top:1px solid #E8EDF5;padding-top:.75rem">
+        <label style="font-size:11px;font-weight:600;color:#0F2544;text-transform:uppercase;letter-spacing:.05em">Unternehmen (Empfänger)</label>
+        <input id="pd-firma" placeholder="Musterfirma GmbH" style="width:100%;margin-top:.25rem;padding:.6rem .75rem;border:1.5px solid #D1D9E6;border-radius:8px;font-size:13px;color:#0F2544;outline:none;box-sizing:border-box">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:#0F2544;text-transform:uppercase;letter-spacing:.05em">Ansprechpartner im Unternehmen</label>
+        <input id="pd-ansprechpartner" placeholder="Frau/Herr Geschäftsführer" style="width:100%;margin-top:.25rem;padding:.6rem .75rem;border:1.5px solid #D1D9E6;border-radius:8px;font-size:13px;color:#0F2544;outline:none;box-sizing:border-box">
+      </div>
+    </div>
+    <div style="display:flex;gap:.75rem;margin-top:1.5rem">
+      <!-- Excel Import/Export -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1rem;margin-bottom:.5rem">
+        <button onclick="downloadExcelVorlage()"
+          style="padding:.55rem;border:0.5px solid #D1D9E6;border-radius:8px;background:#F8FAFC;color:#1A8C6A;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Excel-Vorlage
+        </button>
+        <label
+          style="padding:.55rem;border:0.5px solid #D1D9E6;border-radius:8px;background:#F8FAFC;color:#1A8C6A;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;box-sizing:border-box">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Excel importieren
+          <input type="file" accept=".xlsx,.xls" onchange="importExcel(event)" style="display:none">
+        </label>
+      </div>
+      <div style="height:0.5px;background:#E8EDF4;margin:.25rem 0 .75rem"></div>
+
+<!-- Dialog Buttons -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1.25rem">
+        <button onclick="saveRechner()"
+          style="padding:.65rem;border:0.5px solid #D1D9E6;border-radius:8px;background:#F8FAFC;color:#3D5070;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Speichern
+        </button>
+        <label
+          style="padding:.65rem;border:0.5px solid #D1D9E6;border-radius:8px;background:#F8FAFC;color:#3D5070;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Laden
+          <input type="file" accept=".json" onchange="loadRechner(event)" style="display:none">
+        </label>
+        <button onclick="document.getElementById('dlg-berater').style.display='none'"
+          style="padding:.65rem;border:0.5px solid #D1D9E6;border-radius:8px;background:#fff;color:#4A5E78;font-size:12px;font-weight:600;cursor:pointer">
+          Abbrechen
+        </button>
+        <button onclick="startPrint()"
+          style="padding:.65rem;border:none;border-radius:8px;background:#0F2544;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Angebot drucken
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="sdiv"></div>
+
+<!-- § 4d UK MODUL -->
+<section class="sec" id="uk-modul">
+  <div class="fu"><p class="ey">§ 4d EStG — Unterstützungskasse</p><h2>Steuerliche Dotierungsberechnung</h2>
+  <p class="slead">Berechnung der steuerlich zulässigen Dotierung und Zinsen für die pauschal dotierte Unterstützungskasse nach § 4d EStG.</p></div>
+
+  <!-- EINGABEN -->
+  <div class="mc fu d1" style="margin-bottom:1.5rem">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;padding:1.5rem">
+
+      <!-- Variante Toggle -->
+      <div style="grid-column:1/-1">
+        <div style="font-size:11px;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Versorgungsvariante</div>
+        <div style="display:flex;gap:.5rem">
+          <button id="uk-btn-kapital" onclick="setUKVariante('kapital')" class="bp" style="flex:1;padding:.6rem;font-size:12px">Kapitalzusage</button>
+          <button id="uk-btn-rente" onclick="setUKVariante('rente')" class="bp" style="flex:1;padding:.6rem;font-size:12px;opacity:.5">Rentenzusage</button>
+        </div>
+      </div>
+
+      <!-- Eingabefelder -->
+      <div class="sl-wrap">
+        <div class="sl-label">Anzahl Mitarbeiter <span class="sl-val" id="l-uk-ma">1</span></div>
+        <input type="range" id="r-uk-ma" min="1" max="20" step="1" value="1" oninput="updateUKLabel('uk-ma',this.value,'');calcUK()">
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-label">Alter heute <span class="sl-val" id="l-uk-age">35</span> J.</div>
+        <input type="range" id="r-uk-age" min="20" max="60" step="1" value="35" oninput="updateUKLabel('uk-age',this.value,' J.');calcUK()">
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-label">Rentenbeginnalter <span class="sl-val" id="l-uk-rba">67</span> J.</div>
+        <input type="range" id="r-uk-rba" min="55" max="70" step="1" value="67" oninput="updateUKLabel('uk-rba',this.value,' J.');calcUK()">
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-label">Monatsbeitrag <span class="sl-val" id="l-uk-bt">250</span> €</div>
+        <input type="range" id="r-uk-bt" min="50" max="2000" step="50" value="250" oninput="updateUKLabel('uk-bt',this.value,' €');calcUK()">
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-label">Laufzeit Einzahlung <span class="sl-val" id="l-uk-lz">32</span> J.</div>
+        <input type="range" id="r-uk-lz" min="5" max="40" step="1" value="32" oninput="updateUKLabel('uk-lz',this.value,' J.');calcUK()">
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-label">AN-Verzinsung <span class="sl-val" id="l-uk-rz">2,0</span> %</div>
+        <input type="range" id="r-uk-rz" min="0" max="50" step="5" value="20" oninput="updateUKLabel('uk-rz',(this.value/10).toFixed(1).replace('.',','),' %');calcUK()">
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-label">Darlehenszins UK <span class="sl-val" id="l-uk-dz">6,0</span> %</div>
+        <input type="range" id="r-uk-dz" min="10" max="100" step="5" value="60" oninput="updateUKLabel('uk-dz',(this.value/10).toFixed(1).replace('.',','),' %');calcUK()">
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-label">Unternehmenssteuersatz <span class="sl-val" id="l-uk-st">30</span> %</div>
+        <input type="range" id="r-uk-st" min="15" max="45" step="1" value="30" oninput="updateUKLabel('uk-st',this.value,' %');calcUK()">
+      </div>
+      <div class="sl-wrap" id="uk-rf-wrap">
+        <div class="sl-label">Rentenfaktor <span class="sl-val" id="l-uk-rf">16</span></div>
+        <input type="range" id="r-uk-rf" min="10" max="25" step="1" value="16" oninput="updateUKLabel('uk-rf',this.value,'');calcUK()">
+      </div>
+    </div>
+  </div>
+
+  <!-- ERGEBNISSE -->
+  <div id="uk-results" style="display:none">
+    <!-- KPI Kacheln -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem;margin-bottom:1.5rem" id="uk-kpis"></div>
+
+    <!-- Jahrestabelle -->
+    <div class="mc fu d2">
+      <div style="padding:1rem 1.5rem .5rem;font-size:11px;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.06em">Jahresübersicht — Dotierung & steuerliche Entwicklung</div>
+      <div style="overflow-x:auto">
+        <table class="cf-table" id="uk-table" style="min-width:900px"></table>
+      </div>
+      <div style="padding:.5rem 1.5rem 1rem;font-size:9px;color:var(--txm)">* Dotierung nach § 4d EStG: max. 2,5% der Kapitalzusage bzw. 25% der Jahresrente p.a., bis max. 20% / 200% der Versorgungsleistung erreicht. Zinsen buchhalterisch, steuerlich absetzbar.</div>
+    </div>
+  </div>
+
+</section>
+
+</body>
+</html>
